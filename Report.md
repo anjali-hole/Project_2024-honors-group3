@@ -22,6 +22,16 @@
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
 
+#### Bitonic Sort
+
+#### Sample Sort
+
+#### Merge Sort
+
+#### Radix Sort
+
+#### Column Sort
+
 ### 2c. Evaluation plan - what and how will you measure and compare
 - Input sizes, Input types
 - Strong scaling (same problem size, increase number of processors/nodes)
