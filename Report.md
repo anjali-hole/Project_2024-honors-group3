@@ -1,12 +1,13 @@
 # CSCE 435 Group project
 
-## 0. Group number: 
+## 0. Group number: 3
 
 ## 1. Group members:
-1. First
-2. Second
-3. Third
-4. Fourth
+1. Anjali Hole
+2. Yahya Syed
+3. Kyle Bundick
+4. Peter Schlenker
+5. Harsh Gangaramani
 
 ## 2. Project topic (e.g., parallel sorting algorithms)
 
@@ -16,6 +17,7 @@
 - Sample Sort:
 - Merge Sort:
 - Radix Sort:
+- Column Sort:
 
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
