@@ -28,7 +28,8 @@
 
 #### Merge Sort
 
-``` function parallel_merge_sort(local_data, comm_size, rank):
+```
+function parallel_merge_sort(local_data, comm_size, rank):
     
     // Sort local data using sequential merge sort
     local_data = sequential_merge_sort(local_data)
