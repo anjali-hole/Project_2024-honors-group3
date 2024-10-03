@@ -104,11 +104,11 @@ function main():
 
 ### 2c. Evaluation plan - what and how will you measure and compare
 #### Input:
-Input Sizes
-    Small: 10^5 elements
-    Medium: 10^7 elements
-    Large: 10^9 elements
-Input Types:
+- Input Sizes
+-     Small: 10^5 elements
+-     Medium: 10^7 elements
+-     Large: 10^9 elements
+- Input Types:
     Sorted
     Sorted with 1% perturbed
     Random
