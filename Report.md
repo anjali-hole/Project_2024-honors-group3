@@ -15,7 +15,7 @@
 
 - Bitonic Sort (Peter): 
 - Sample Sort (Kyle): 
-- Merge Sort (Anjali): Parallel implemented using MPI
+- Merge Sort (Anjali): A divide-and-conquer sorting algorithm implemented in parallel using MPI for data distribution and merging (on Grace cluster).
 - Radix Sort (Yahya): 
 - Column Sort (Harsh): 
 
