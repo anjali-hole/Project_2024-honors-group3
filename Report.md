@@ -78,7 +78,7 @@ function main():
     // Perform parallel merge sort
     sorted_local_data = parallel_merge_sort(local_data, comm_size, rank)
 
-    // Gather all sorted data at root process (optional)
+    // Gather all sorted data at root process
     if rank == 0:
         global_sorted_data = MPI_Gather(sorted_local_data, root=0)
     else:
