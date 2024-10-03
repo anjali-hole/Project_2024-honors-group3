@@ -105,28 +105,28 @@ function main():
 ### 2c. Evaluation plan - what and how will you measure and compare
 #### Input:
 - Input Sizes
--     Small: 10^5 elements
--     Medium: 10^7 elements
--     Large: 10^9 elements
+    - Small: 10^5 elements
+    - Medium: 10^7 elements
+    - Large: 10^9 elements
 - Input Types:
-    Sorted
-    Sorted with 1% perturbed
-    Random
-    Reverse sorted
+    - Sorted
+    - Sorted with 1% perturbed
+    - Random
+    - Reverse sorted
 #### Strong scaling (same problem size, increase number of processors/nodes)
-Fix problem size at 10^8 elements
-Increase number of processors: 1, 2, 4, 8, 16, 32, 64, 128
-Measure and compare:
-- Total execution time
-- Speedup (T1 / Tn)
-- Parallel efficiency ((T1 / Tn) / n)
+- Fix problem size at 10^8 elements
+- Increase number of processors: 1, 2, 4, 8, 16, 32, 64, 128
+- Measure and compare:
+    - Total execution time
+    - Speedup (T1 / Tn)
+    - Parallel efficiency ((T1 / Tn) / n)
 #### Weak scaling (increase problem size, increase number of processors)
-Start with 10^6 elements per processor
-Increase both problem size and number of processors proportionally
-    (e.g., 1 processor: 10^6, 2 processors: 2x10^6, 4 processors: 4x10^6, etc.)
-Measure and compare:
-- Execution time
-- Parallel efficiency (T1 / Tn)
+- Start with 10^6 elements per processor
+- Increase both problem size and number of processors proportionally
+    - (e.g., 1 processor: 10^6, 2 processors: 2x10^6, 4 processors: 4x10^6, etc.)
+- Measure and compare:
+    - Execution time
+    - Parallel efficiency (T1 / Tn)
 #### Performance Metrics (to be measured for all experiments):
 - Total execution time
 - Communication time
