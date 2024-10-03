@@ -28,7 +28,8 @@
 
 #### Merge Sort
 
-function parallel_merge_sort(local_data, comm_size, rank):
+``` function parallel_merge_sort(local_data, comm_size, rank):
+    
     // Sort local data using sequential merge sort
     local_data = sequential_merge_sort(local_data)
 
@@ -51,6 +52,7 @@ function parallel_merge_sort(local_data, comm_size, rank):
     return local_data
 
 function main():
+
     // Initialize MPI
     MPI_Init()
     comm_size = MPI_Comm_size(MPI_COMM_WORLD)  // Get number of processes
@@ -70,6 +72,7 @@ function main():
 
     // Finalize MPI
     MPI_Finalize()
+```
 
 
 #### Radix Sort
