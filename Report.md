@@ -13,11 +13,24 @@
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 
-- Bitonic Sort: Peter
-- Sample Sort: Kyle
-- Merge Sort: Anjali
-- Radix Sort: Yahya
-- Column Sort: Harsh
+- Bitonic Sort (Peter): 
+- Sample Sort (Kyle): 
+- Merge Sort (Anjali): Parallel implemented using MPI
+- Radix Sort (Yahya): 
+- Column Sort (Harsh): 
+
+#### Team Communication
+- Team will communicate via Discord (for conferencing/meeting)
+- Team will use the GitHub repo for reports, and Google Drive to share generated graphs/ report details
+
+#### What versions do you plan to compare:
+
+##### Communication strategies:
+    a. Point-to-point communication (as shown in the pseudocode)
+    b. Collective communication (using MPI_Allgather or MPI_Alltoall)
+##### Parallelization strategies:
+    a. SPMD (Single Program, Multiple Data) as shown in the pseudocode
+    b. Master/Worker model
 
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
@@ -83,7 +96,6 @@ function main():
     MPI_Recv()
     MPI_Gather() (optional, for collecting all sorted data to root process)
     MPI_Finalize()
-
 
 
 #### Radix Sort
