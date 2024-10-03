@@ -126,7 +126,7 @@ function main():
     - (e.g., 1 processor: 10^6, 2 processors: 2x10^6, 4 processors: 4x10^6, etc.)
 - Measure and compare:
     - Execution time
-    - Parallel efficiency (T1 / Tn)
+    - Parallel efficiency 
 #### Performance Metrics (to be measured for all experiments):
 - Total execution time
 - Communication time
