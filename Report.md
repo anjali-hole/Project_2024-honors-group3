@@ -94,7 +94,7 @@ function main():
     MPI_Comm_rank()
     MPI_Send()
     MPI_Recv()
-    MPI_Gather() (optional, for collecting all sorted data to root process)
+    MPI_Gather() 
     MPI_Finalize()
 
 
