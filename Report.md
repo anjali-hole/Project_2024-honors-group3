@@ -74,6 +74,16 @@ function main():
     // Finalize MPI
     MPI_Finalize()
 ```
+#####MPI calls to be used:
+
+    MPI_Init()
+    MPI_Comm_size()
+    MPI_Comm_rank()
+    MPI_Send()
+    MPI_Recv()
+    MPI_Gather() (optional, for collecting all sorted data to root process)
+    MPI_Finalize()
+
 
 
 #### Radix Sort
