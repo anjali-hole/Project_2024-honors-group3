@@ -86,18 +86,6 @@ function main(data, samples):
 #### Merge Sort
 
 ```
-// Function to extract a column from a 2D matrix
-function get_column_data(local_data, col_index):
-    // Initialize an empty list to store the column data
-    column_data = []
-
-    // Loop over each row in the local data
-    for row in local_data:
-        // Append the element at the column index to the column_data list
-        column_data.append(row[col_index])
-
-    return column_data
-
 function parallel_merge_sort(local_data, comm_size, rank):
     
     // Sort local data using sequential merge sort
@@ -158,6 +146,18 @@ function main():
 
 #### Column Sort
 ```
+// Function to extract a column from a 2D matrix
+function get_column_data(local_data, col_index):
+    // Initialize an empty list to store the column data
+    column_data = []
+
+    // Loop over each row in the local data
+    for row in local_data:
+        // Append the element at the column index to the column_data list
+        column_data.append(row[col_index])
+
+    return column_data
+
 function parallel_column_sort(local_data, num_rows, num_cols, comm_size, rank):
     // Sort each column locally
     for col = 0 to num_cols - 1:
