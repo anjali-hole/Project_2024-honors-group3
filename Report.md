@@ -17,8 +17,7 @@
 - **Sample Sort (Kyle)**: A divide-and-conquer algorithm implemented in MPI that splits the data into buckets based on data samples, sorts the buckets, and then recombines the data.
 - **Merge Sort (Anjali)**: A parallel divide-and-conquer algorithm implemented using MPI for efficient data distribution and merging where each process independently sorts a portion of the data, and MPI coordinates the merging of subarrays across multiple processors on the Grace cluster.
 - **Radix Sort (Yahya)**: 
-- **Column Sort (Harsh)**: 
-
+- **Column Sort (Harsh)**:  A multi-step matrix manipulation algorithm implemented using MPI that sorts a matrix by its columns, redistributes it through a series of transpositions, and applies strategic global row shifts
 #### Team Communication
 - Team will communicate via Discord (for conferencing/meeting)
 - Team will use the GitHub repo for reports, and Google Drive to share generated graphs/ report details
@@ -146,6 +145,74 @@ function main():
 #### Radix Sort
 
 #### Column Sort
+```
+function parallel_column_sort(local_data, num_rows, num_cols, comm_size, rank):
+    // Sort each column locally
+    for col = 0 to num_cols - 1:
+        local_column_data = get_column_data(local_data, col)
+        sorted_column_data = sequential_sort(local_column_data) // can use any efficient sequential search such as merge, bubble
+        update_column(local_data, col, sorted_column_data)
+
+    // Transpose the matrix
+    local_data = transpose_local(local_data)
+
+    // Perform all-to-all communication to redistribute columns as rows
+    new_rows = MPI_Alltoallv(send_data=local_data, send_counts=calculate_send_counts(rank, comm_size),
+                             recv_data=new_matrix_space, recv_counts=calculate_recv_counts(rank, comm_size))
+
+    // Sort all new rows received
+    for row = 0 to num_rows - 1:
+        sorted_row = sequential_sort(new_rows[row])
+        new_rows[row] = sorted_row
+
+    // Transpose the matrix back
+    local_data = transpose_local(new_rows)
+
+    // Another all-to-all communication to redistribute original rows
+    final_matrix = MPI_Alltoallv(send_data=local_data, send_counts=calculate_send_counts(rank, comm_size),
+                                 recv_data=final_matrix_space, recv_counts=calculate_recv_counts(rank, comm_size))
+
+    // Final local sort of each column again
+    for col = 0 to num_cols - 1:
+        local_column_data = get_column_data(final_matrix, col)
+        sorted_column_data = sequential_sort(local_column_data)
+        update_column(final_matrix, col, sorted_column_data)
+
+    return final_matrix
+
+function main():
+
+    // Initialize MPI
+    MPI_Init()
+    comm_size = MPI_Comm_size(MPI_COMM_WORLD)  // Get number of processes
+    rank = MPI_Comm_rank(MPI_COMM_WORLD)       // Get process rank
+
+    // Setup matrix dimensions and generate local data
+    num_rows, num_cols = determine_dimensions(comm_size)
+    local_data = read_or_generate_data(num_rows, num_cols, rank)
+
+    // Perform parallel column sort
+    sorted_matrix = parallel_column_sort(local_data, num_rows, num_cols, comm_size, rank)
+
+    // Gather all sorted matrices at root process
+    if rank == 0:
+        global_sorted_matrix = MPI_Gather(sorted_matrix, root=0)
+    else:
+        MPI_Gather(sorted_matrix, root=0)
+
+    // Finalize MPI
+    MPI_Finalize()
+```
+
+// MPI calls to be used
+```
+MPI_Init()
+MPI_Comm_size()
+MPI_Comm_rank()
+MPI_Alltoallv()  // Used for transposing the matrix
+MPI_Gather()
+MPI_Finalize()
+```
 
 ### 2c. Evaluation plan - what and how will you measure and compare
 #### Input:
