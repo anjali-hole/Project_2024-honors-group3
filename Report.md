@@ -15,7 +15,7 @@
 
 - **Bitonic Sort (Peter)**: 
 - **Sample Sort (Kyle)**: A divide-and-conquer algorithm implemented in MPI that splits the data into buckets based on data samples, sorts the buckets, and then recombines the data.
-- **Merge Sort (Anjali)**: A parallel divide-and-conquer sorting algorithm implemented using MPI for efficient data distribution and merging. Each process independently sorts a portion of the data, and MPI coordinates the merging of subarrays across multiple processors on the Grace cluster, enabling faster sorting of large datasets.
+- **Merge Sort (Anjali)**: A parallel divide-and-conquer algorithm implemented using MPI for efficient data distribution and merging where each process independently sorts a portion of the data, and MPI coordinates the merging of subarrays across multiple processors on the Grace cluster.
 - **Radix Sort (Yahya)**: 
 - **Column Sort (Harsh)**: 
 
