@@ -106,8 +106,12 @@ function main():
 #### Input:
 - Input Sizes
     - 2<sup>16</sup>
-    - Medium: 10^7 elements
-    - Large: 10^9 elements
+    - 2<sup>18</sup>
+    - 2<sup>20</sup>
+    - 2<sup>22</sup>
+    - 2<sup>24</sup>
+    - 2<sup>26</sup>
+    - 2<sup>28</sup>
 - Input Types:
     - Sorted
     - Sorted with 1% perturbed
@@ -115,7 +119,7 @@ function main():
     - Reverse sorted
 #### Strong scaling (same problem size, increase number of processors/nodes)
 - Fix problem size at 10^8 elements
-- Increase number of processors: 1, 2, 4, 8, 16, 32, 64, 128
+- Increase number of processors: 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
 - Measure and compare:
     - Total execution time
     - Speedup (T1 / Tn)
