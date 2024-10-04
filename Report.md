@@ -14,7 +14,7 @@
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 
 - Bitonic Sort (Peter): 
-- Sample Sort (Kyle): 
+- Sample Sort (Kyle): A divide-and-conquer algorithm implemented in MPI that splits the data into buckets based on data samples, sorts the buckets, and then recombines the data.
 - Merge Sort (Anjali): A divide-and-conquer sorting algorithm implemented in parallel using MPI for data distribution and merging (on Grace cluster).
 - Radix Sort (Yahya): 
 - Column Sort (Harsh): 
@@ -38,6 +38,51 @@
 #### Bitonic Sort
 
 #### Sample Sort
+```
+// s: number of samples, m: number of buckets
+function partition(full_data, s, m)
+    // get samples
+    for sample = 0 to s-1:
+        samples.append(get_random_element(full_data))
+    quicksort(samples)
+
+    //select splitters
+    oversample = s/m
+    splitters = [-inf]
+    for splitter = 1 to m-1:
+        splitters.append(samples[floor(oversample*splitter)])
+    splitters.append(inf)
+
+    //Put data into buckets based on splitters
+    for element in full_data:
+        find j | splitters[j]<element<=splitters[j+1]
+        buckets[j].append(element)
+
+function main(data, samples):
+
+    MPI_Init()
+    rank = MPI_Comm_rank(MPI_COMM_WORLD)
+    size = MPI_Comm_size(MPI_COMM_WORLD)
+
+    if (rank == MASTER):
+        buckets = partition(data, samples, size)
+    
+    MPI_Scatter(send = buckets, recv = local_data, root=0)
+    local_data = quicksort(local_data)
+    MPI_Gather(send = local_data, recv = sorted_data, root=0)
+
+    MPI_Finalize()
+
+
+```
+##### MPI calls to be used:
+
+    MPI_Init()
+    MPI_Comm_size()
+    MPI_Comm_rank()
+    MPI_Scatter()
+    MPI_Gather() 
+    MPI_Finalize()
 
 #### Merge Sort
 
