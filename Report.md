@@ -405,7 +405,7 @@ function main():
     MPI_Finalize()
 ```
 
-// MPI calls to be used
+##### MPI calls to be used
 ```
 MPI_Init()
 MPI_Comm_size()
