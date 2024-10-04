@@ -13,7 +13,7 @@
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 
-- **Bitonic Sort (Peter)**: A divide-and-conquer algorithm implemented using MPI that sorts data into many bitonic sequences (the first half only increasing, the second half only decreasing). It then creates alternating increasing and decreasing sequences to create half as many bitonic sequences, but twice the size. It keeps repeating this process until there is one large bitonic sequence left, at which point it creates one final increasing sequence.
+- **Bitonic Sort (Peter)**: A divide-and-conquer algorithm implemented using MPI that sorts data into many bitonic sequences (the first half only increasing, the second half only decreasing). It then creates alternating increasing and decreasing sequences out of the bitonic sequences to create half as many bitonic sequences, but twice the size. It keeps repeating this process until there is one large bitonic sequence left, at which point it creates one final increasing sequence. For the parallel version I'm implementing, instead of one value each process will keep a sorted list, and when two processes compare lists the smaller sequence will hold a sorted list where all the elements are smaller than the elements in the bigger sequence.
 - **Sample Sort (Kyle)**: A divide-and-conquer algorithm implemented in MPI that splits the data into buckets based on data samples, sorts the buckets, and then recombines the data.
 - **Merge Sort (Anjali)**: A parallel divide-and-conquer algorithm implemented using MPI for efficient data distribution and merging where each process independently sorts a portion of the data, and MPI coordinates the merging of subarrays across multiple processors on the Grace cluster.
 - **Radix Sort (Yahya)**: 
@@ -35,6 +35,111 @@
 - For MPI programs, include MPI calls you will use to coordinate between processes
 
 #### Bitonic Sort
+```
+// Assumes the total list size is a power of 2, and that comm_size is a power or 2 less than or equal to the list size, and that local_data size times comm_size is the total list size
+function bitonic_sort(local_data, comm_size, rank):
+    local_data = sequential_sort(local_data)
+
+    for level = 0 to log2(comm_size) - 1:
+        is_increasing = !rank.bit(level + 1)
+
+        for current_bit = level to 0:
+            other_rank = rank.flip_bit(current_bit)
+
+            // While the data lives on two processes, only one needs to do the comparison.
+            // For now the lower rank process will always do the comparison, though it might speed up the algorithm if we try to balance who does the comparison more evenly.
+            is_doing_comparison = rank < other_rank
+            if (is_doing_comparison):
+                other_data = MPI_Recv(other_rank)
+
+                (smaller_half, larger_half) = merge(local_data, other_data)
+
+                if (is_increasing):
+                    local_data = smaller_half
+                    MPI_Send(larger_half, other_rank)
+                else:
+                    local_data = larger_half
+                    MPI_Send(smaller_half, other_rank)
+            else:
+                MPI_Send(local_data, other_rank)
+                local_data = MPI_Recv(other_rank)
+
+    return local_data
+
+// Assumes data1 and data2 are the same size
+function merge(data1, data2):
+    array_size = sizeof(data1)
+
+    lower_half = array size of array_size
+    upper_half = array size of array_size
+
+    index1 = index2 = 0
+
+    while (index1 < array_size && index2 < array_size):
+        output_index = index1 + index2
+        choose_data1 = data1[index1] < data2[index2]
+
+        if (choose_data1):
+            value = data1[index1]
+            index1++
+        else:
+            value = data2[index2]
+            index2++
+        
+        if (output_index < array_size):
+            lower_half[output_index] = value
+        else:
+            upper_half[output_index] = value
+        
+    // by this point we are guaranteed to be filling upper_half, since we have completely gone through one of the input arrays
+    while (index1 < array_size):
+        output_index = index1 + index2
+        upper_half[ouput_index] = data1[index1]
+        index1++
+    
+    while (index2 < array_size):
+        output_index = index1 + index2
+        upper_half[ouput_index] = data2[index2]
+        index2++
+
+    return (lower_half, upper_half)
+
+function main():
+    // Initialize MPI
+    MPI_Init()
+    comm_size = MPI_Comm_size(MPI_COMM_WORLD)
+    rank = MPI_Comm_rank(MPI_COMM_WORLD)
+
+    // Get local data
+    local_data = read_or_generate_data(rank, comm_size)
+
+    // Sort
+    local_data = bitonic_sort(local_data, comm_size, rank)
+
+    // Verify
+    verify_sorted(local_data, comm_size, rank)
+
+    // End program
+    MPI_Finalize()
+```
+
+
+##### MPI calls to be used:
+
+    MPI_Init()
+    MPI_Comm_size()
+    MPI_Comm_rank()
+    MPI_Send()
+    MPI_Recv()
+    MPI_Finalize()
+
+##### Other functions:
+
+    sequential_sort(data) - exact algorithm isn't relevant
+    integer.bit(n) - get the value of the nth bit of the integer as a bool
+    integer.flip_bit(n) - returns an integer with the same bits, except the nth bit is flipped
+    read_or_generate_data(rank, comm_size) - data generation function used for each sorting algorithm (to be implemented later)
+    verify_sorted(local_data, comm_size, rank) - function to verify local data is sorted and that this sequence is smaller than the one stored in the next highest rank (to be implemented later)
 
 #### Sample Sort
 ```
