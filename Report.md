@@ -127,7 +127,7 @@ function main():
 #### Weak scaling (increase problem size, increase number of processors)
 - Start with 10^6 elements per processor
 - Increase both problem size and number of processors proportionally
-    - (e.g., 1 processor: 10^6, 2 processors: 2x10^6, 4 processors: 4x10^6, etc.)
+    - (e.g., 2 processors: 2x10^6, 4 processors: 4x10^6, etc.)
 - Measure and compare:
     - Execution time
     - Parallel efficiency 
