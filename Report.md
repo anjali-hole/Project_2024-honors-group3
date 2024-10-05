@@ -431,16 +431,16 @@ MPI_Finalize()
     - Random
     - Reverse sorted
 #### Strong scaling (same problem size, increase number of processors/nodes)
-- Fix problem size at 10^8 elements
+- Fix problem size at 2<sup>24</sup> elements
 - Increase number of processors: 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
 - Measure and compare:
     - Total execution time
     - Speedup (T1 / Tn)
     - Parallel efficiency ((T1 / Tn) / n)
 #### Weak scaling (increase problem size, increase number of processors)
-- Start with 10^6 elements per processor
+- Start with 2<sup>16</sup> elements per processor
 - Increase both problem size and number of processors proportionally
-    - (e.g., 2 processors: 2x10^6, 4 processors: 4x10^6, etc.)
+    - (e.g., 2 processors: 2 x 2<sup>16</sup>, 4 processors: 4 x 2<sup>16</sup>, etc.)
 - Measure and compare:
     - Execution time
     - Parallel efficiency 
