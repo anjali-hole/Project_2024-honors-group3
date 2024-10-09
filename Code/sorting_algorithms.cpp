@@ -1,5 +1,7 @@
 #include "sorting_algorithms.hpp"
 
+#include "mpi.h"
+
 void sequential_sort(int* local_data, size_t local_data_size) {
     
 }
