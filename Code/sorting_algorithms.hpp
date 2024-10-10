@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 void sequential_sort(int* local_data, size_t local_data_size);
 
 void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int rank);
