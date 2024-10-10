@@ -2,8 +2,11 @@
 
 #include "mpi.h"
 
+#include <algorithm>
+#include <vector>
+
 void sequential_sort(int* local_data, size_t local_data_size) {
-    
+    std::sort(local_data, local_data + local_data_size);
 }
 
 #pragma region bitonic_sort
