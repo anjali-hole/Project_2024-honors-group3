@@ -4,7 +4,13 @@ find_package(MPI REQUIRED)
 find_package(caliper REQUIRED)
 find_package(adiak REQUIRED)
 
-add_executable(main ../Code/main.cpp)
+set(SOURCES
+    ../Code/main.cpp
+    ../Code/data_generation.cpp 
+    ../Code/sorting_algorithms.cpp 
+)
+
+add_executable(main ${SOURCES})
 
 message(STATUS "MPI includes : ${MPI_INCLUDE_PATH}")
 message(STATUS "Caliper includes : ${caliper_INCLUDE_DIR}")

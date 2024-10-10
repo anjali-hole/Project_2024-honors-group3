@@ -1,6 +1,8 @@
 #include "data_generation.hpp"
 #include "sorting_algorithms.hpp"
 #include "mpi.h"
+#include <cstdlib>  // For atoi
+
 
 int main(int argc, char *argv[]) {
     // Read arguments

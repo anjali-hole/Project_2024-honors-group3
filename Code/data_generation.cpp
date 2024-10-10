@@ -40,7 +40,7 @@ bool check_data_sorted(int* local_data, size_t local_data_size, int comm_size, i
 
     // If not the first process send the smallest number down
     if (rank != 0) {
-        MPI_Send(&local_data[0], 1 MPI_INT, rank - 1, 0, MPI_COMM_WORLD);
+	MPI_Send(&local_data[0], 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD);      
     }
 
     // If not the last process make sure the number received is larger than the largest number in the local data
