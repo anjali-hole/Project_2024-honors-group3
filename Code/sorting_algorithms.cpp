@@ -81,7 +81,7 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
             CALI_MARK_BEGIN("comm");
             CALI_MARK_BEGIN("comm_large");
             MPI_Sendrecv(local_data, local_data_size, MPI_INT, partner, 1, received_data.data(), partner_size, MPI_INT, partner, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            ALI_MARK_END("comm_large");
+            CALI_MARK_END("comm_large");
             CALI_MARK_END("comm");
 
             //merge

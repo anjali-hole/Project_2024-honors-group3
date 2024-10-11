@@ -2,7 +2,8 @@
 #include "sorting_algorithms.hpp"
 #include "mpi.h"
 #include <cstdlib>  // For atoi
-
+#include <caliper/cali.h>
+#include <adiak.hpp>
 
 int main(int argc, char *argv[]) {
     CALI_MARK_BEGIN("main");
