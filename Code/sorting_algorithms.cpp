@@ -1,5 +1,5 @@
 #include "sorting_algorithms.hpp"
-
+#include <iostream>
 #include "mpi.h"
 
 #include <algorithm>
@@ -49,6 +49,16 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
     //sort local data
     sequential_sort(local_data, local_data_size);
 
+    //testing
+    //std::cout << std::endl;
+    //std::cout << "Rank " << rank << " after local sort: ";
+    //for (size_t i = 0; i < local_data_size; ++i) {
+    //    std::cout << local_data[i] << " ";
+    //}
+    //std::cout << std::endl;
+
+
+
     //parallel mergee
     for (int step = 1; step < comm_size; step *=2){
         int partner = rank ^ step;
@@ -75,6 +85,14 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
             size_t new_size = (rank < partner) ? local_data_size : partner_size;
             std::copy(merged.begin(), merged.begin() + new_size, local_data);
             local_data_size = new_size;
+
+	    //testing
+	    //std::cout << std::endl;
+	    //std::cout << "Rank " << rank << " after merge with partner " << partner << ": ";
+            //for (size_t i = 0; i < local_data_size; ++i) {
+            //    std::cout << local_data[i] << " ";
+            //}
+            //std::cout << std::endl;
         }
     }
 }
