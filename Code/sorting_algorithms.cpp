@@ -51,16 +51,25 @@ void merge(int* left, int left_size, int* right, int right_size, int* result) {
 
 void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
     CALI_MARK_BEGIN("comp_large");
-    //sort local data
-    sequential_sort(local_data, local_data_size);
 
     //testing
-    //std::cout << std::endl;
-    //std::cout << "Rank " << rank << " after local sort: ";
-    //for (size_t i = 0; i < local_data_size; ++i) {
-    //    std::cout << local_data[i] << " ";
-    //}
-    //std::cout << std::endl;
+    std::cout << "Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
+
+
+   //sort local data
+    sequential_sort(local_data, local_data_size);
+
+
+    //testing
+    std::cout << "Rank " << rank << " after local sort: ";
+     for (size_t i = 0; i < local_data_size; ++i) {
+            std::cout << local_data[i] << " ";
+      }
+      std::cout << std::endl;
 
     //parallel mergee
     for (int step = 1; step < comm_size; step *=2){
@@ -84,29 +93,44 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
             CALI_MARK_END("comm_large");
             CALI_MARK_END("comm");
 
-            //merge
-            std::vector<int> merged(local_data_size + partner_size);
-            if (rank < partner) {
-                merge(local_data, local_data_size, received_data.data(), partner_size, merged.data());
-            } else {
-                merge(received_data.data(), partner_size, local_data, local_data_size, merged.data());
+//testing
+	    std::cout << "Rank " << rank << " received from " << partner << ": ";
+            for (size_t i = 0; i < partner_size; ++i) {
+                std::cout << received_data[i] << " ";
             }
+            std::cout << std::endl;
+ 
+
+           //merge
+            std::vector<int> merged(local_data_size + partner_size);   
+            merge(local_data, local_data_size, received_data.data(), partner_size, merged.data());
+               
+
 
             //keep correct half of the data
-            size_t new_size = (rank < partner) ? local_data_size : partner_size;
-            std::copy(merged.begin(), merged.begin() + new_size, local_data);
-            local_data_size = new_size;
+            size_t new_size = (rank < partner) ? std::min(local_data_size, merged.size() / 2) : std::max(local_data_size, merged.size() / 2);
+            std::copy(merged.begin() + (rank < partner ? 0 : merged.size() - new_size), 
+                      merged.begin() + (rank < partner ? new_size : merged.size()), 
+                      local_data);
+            local_data_size = new_size;            
 
-	    //testing
-	    //std::cout << std::endl;
-	    //std::cout << "Rank " << rank << " after merge with partner " << partner << ": ";
-            //for (size_t i = 0; i < local_data_size; ++i) {
-            //    std::cout << local_data[i] << " ";
-            //}
-            //std::cout << std::endl;
+
+	//testing
+	    std::cout << "Rank " << rank << " after merge with " << partner << ": ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << " ";
+            }
+            std::cout << std::endl;
         }
     }
-    CALI_MARK_END("comp_large");
+    //testing
+    std::cout << "Rank " << rank << " final data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl;
+ 
+   CALI_MARK_END("comp_large");
 }
 
 #pragma endregion

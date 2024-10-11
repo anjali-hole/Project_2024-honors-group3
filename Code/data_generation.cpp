@@ -2,7 +2,7 @@
 #include <iostream>
 #include "mpi.h"
 #include <caliper/cali.h>
-
+#include <climits>
 void generate_sorted(int* local_data, size_t local_data_size, int comm_size, int rank) {
     CALI_MARK_BEGIN("data_init_runtime");
     // Calculate the global start index for this rank
@@ -85,3 +85,4 @@ bool check_data_sorted(int* local_data, size_t local_data_size, int comm_size, i
     CALI_MARK_END("correctness_check");
     return true;
 }
+
