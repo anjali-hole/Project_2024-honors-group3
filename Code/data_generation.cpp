@@ -19,6 +19,7 @@ void generate_sorted(int* local_data, size_t local_data_size, int comm_size, int
     //    std::cout << local_data[i] << " ";
     //}
     //std::cout << std::endl;
+
     CALI_MARK_END("data_init_runtime");
 }
 

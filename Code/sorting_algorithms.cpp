@@ -71,8 +71,8 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
             CALI_MARK_BEGIN("comm_small");
             int partner_size;
             MPI_Sendrecv(&local_data_size, 1, MPI_INT, partner, 0, &partner_size, 1, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            CALI_MARK_BEGIN("comm");
-            CALI_MARK_BEGIN("comm_small");
+            CALI_MARK_END("comm_small");
+            CALI_MARK_END("comm");
 
             //buffer for recieved data
             std::vector<int> received_data(partner_size);
