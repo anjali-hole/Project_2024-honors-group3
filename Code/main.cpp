@@ -62,6 +62,7 @@ int main(int argc, char *argv[]) {
     else if (data_generation == 1)
     {
         generate_sorted_1percent_perturbed(local_data, array_size, comm_size, rank);
+        return 1;
     }
     else if (data_generation == 2)
     {
