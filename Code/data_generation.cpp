@@ -27,8 +27,22 @@ void generate_sorted_1percent_perturbed(int* local_data, size_t local_data_size,
 
 }
 
-void generate_random(int* local_data, size_t local_data_size, int comm_size, int rank) {
+void generate_random(int* local_data, size_t local_data_size, int comm_size, int rank) { 
+    CALI_MARK_BEGIN("data_init_runtime");
+    srand(time(NULL) * rank);
+    for (size_t i = 0; i < local_data_size; ++i) {
+        local_data[i] = rand();
+    }
 
+    //testing
+    /*std::cout << std::endl;
+    std::cout << "Rank " << rank << " generated data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }           
+    std::cout << std::endl;*/
+    CALI_MARK_END("data_init_runtime"); 
+    
 }
 
 void generate_reverse_sorted(int* local_data, size_t local_data_size, int comm_size, int rank) {
