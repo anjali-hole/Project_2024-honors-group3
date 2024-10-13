@@ -24,7 +24,28 @@ void generate_sorted(int* local_data, size_t local_data_size, int comm_size, int
 }
 
 void generate_sorted_1percent_perturbed(int* local_data, size_t local_data_size, int comm_size, int rank) {
+    CALI_MARK_BEGIN("data_perturbed_init_runtime");
+    
+    // Generate sorted data
+    generate_sorted(local_data, local_data_size, comm_size, rank);
+    srand(time(NULL) + rank);
 
+    // Get 1% of local_data_size elements to swap
+    size_t swap_count = local_data_size / 100;
+
+    for (size_t i = 0; i < swap_count; ++i) {
+        // Select two random indices to swap
+        size_t index1 = rand() % local_data_size;
+        size_t index2 = rand() % local_data_size;
+        while (index2 == index1) {
+            index2 = rand() % local_data_size;
+        }
+        // Swap
+        int temp = local_data[index1];
+        local_data[index1] = local_data[index2];
+        local_data[index2] = temp;
+    }
+    CALI_MARK_END("data_perturbed_init_runtime");
 }
 
 void generate_random(int* local_data, size_t local_data_size, int comm_size, int rank) { 
