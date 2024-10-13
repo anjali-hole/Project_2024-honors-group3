@@ -4,6 +4,7 @@
 #include <caliper/cali.h>
 #include <algorithm>
 #include <vector>
+#include <climits>
 
 void sequential_sort(int* local_data, size_t local_data_size) {
     CALI_MARK_BEGIN("comp_small");
@@ -21,8 +22,66 @@ void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int ra
 
 #pragma region sample_sort
 
-void sample_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+/*
+int** partition(int* data, size_t data_size, double oversample, int bucket_count)
+{
+    srand(time(NULL));
+    size_t sample_count = oversample * bucket_count;
+    int* samples = new int[sample_count];
+    for (size_t i = 0; i < sample_count; ++i)
+    {
+        samples[i] = data[rand() % data_size];
+    }
     
+}
+*/ 
+
+void sample_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+    srand(time(NULL) * rank);
+    constexpr size_t OVERSAMPLE_FACTOR = 3;
+    
+    int local_samples[OVERSAMPLE_FACTOR];
+    for (size_t i = 0; i < OVERSAMPLE_FACTOR; ++i)
+        local_samples[i] = local_data[rand() % local_data_size];
+
+    int* oversampled;
+    int* splitters = new int[comm_size];
+    int samples = OVERSAMPLE_FACTOR * comm_size;
+    if (rank == 0) oversampled = new int[samples];
+    MPI_Gather(local_samples, OVERSAMPLE_FACTOR, MPI_INT, oversampled, samples, MPI_INT, 0, MPI_COMM_WORLD);
+    if (rank == 0) {
+        sequential_sort(oversampled, samples);
+        for (size_t i = 1; i < comm_size; ++i)
+            splitters[i-1] = oversampled[i * OVERSAMPLE_FACTOR];
+    }
+    splitters[comm_size-1] = INT_MAX;
+    MPI_Bcast(splitters, comm_size, MPI_INT, 0, MPI_COMM_WORLD);
+    std::vector<int>* buckets = new std::vector<int>[comm_size]; 
+    
+    for (size_t i = 0; i < local_data_size; ++i) {
+        int bucket = std::lower_bound(splitters, splitters + comm_size, local_data[i]) - splitters;
+        buckets[bucket].push_back(i);
+    }
+
+    std::vector<int> local_bucket;
+    int copy_val;
+    for (int i = 0; i < comm_size; ++i) {
+        if (i == rank) { //Receive data from others 
+            for (int j = 0; i < comm_size; ++i) {
+                if (i == j) for (auto local_val : buckets[i]) local_bucket.push_back(local_val);
+                else {
+                    //Receive element count
+                    //Receive elements
+                } 
+            }
+        }
+        else {
+            //Send element count
+            //Send elements
+        }
+    }
+    
+    sequential_sort(local_bucket.data(), local_bucket.size());
 }
 
 #pragma endregion
