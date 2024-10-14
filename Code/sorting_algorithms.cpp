@@ -218,25 +218,29 @@ void counting_sort(int* arr, int n, int exp) {
 }
 
 void radix_sort(int* local_data, size_t local_size, int comm_size, int rank) {
-    CALI_MARK_BEGIN("whole_radix_sort");
+    CALI_MARK_BEGIN("comp");
+    CALI_MARK_BEGIN("comp_large");
     // Find the maximum value in the local data to determine the number of digits and count sort each digit
     int max_val = *std::max_element(local_data, local_data + local_size);
     for (int exp = 1; max_val / exp > 0; exp *= 10)
     {
-        CALI_MARK_BEGIN("counting_sort");
+        CALI_MARK_BEGIN("comp_small");
         counting_sort(local_data, local_size, exp);
-        CALI_MARK_END("counting_sort");
+        CALI_MARK_END("comp_small");
     }
+    CALI_MARK_END("comp_large");
+    CALI_MARK_END("comp");
     
     // Transfer data between processes such that data is sorted across all processes
-    CALI_MARK_BEGIN("comm_full");
+    CALI_MARK_BEGIN("comm");
+    CALI_MARK_BEGIN("comm_small");
     int global_max, global_min;
     int local_max = *std::max_element(local_data, local_data + local_size);
     int local_min = *std::min_element(local_data, local_data + local_size);
     MPI_Allreduce(&local_max, &global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
     MPI_Allreduce(&local_min, &global_min, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    CALI_MARK_END("comm_small");
 
-    CALI_MARK_BEGIN("comm_send");
     int* send_counts = new int[comm_size]();
     int* send_offsets = new int[comm_size]();
     int* recv_counts = new int[comm_size]();
@@ -268,11 +272,9 @@ void radix_sort(int* local_data, size_t local_size, int comm_size, int rank) {
             send_data[index++] = buckets[i][j];
         }
     }
-
+    CALI_MARK_BEGIN("comm_large");
     MPI_Alltoall(send_counts, 1, MPI_INT, recv_counts, 1, MPI_INT, MPI_COMM_WORLD);
-    CALI_MARK_END("comm_send");
 
-    CALI_MARK_BEGIN("comm_recv");
     int total_recv = 0;
     for (int i = 0; i < comm_size; i++) {
         recv_offsets[i] = total_recv;
@@ -281,14 +283,20 @@ void radix_sort(int* local_data, size_t local_size, int comm_size, int rank) {
 
     int* recv_data = new int[total_recv];
     MPI_Alltoallv(send_data, send_counts, send_offsets, MPI_INT, recv_data, recv_counts, recv_offsets, MPI_INT, MPI_COMM_WORLD);
-    CALI_MARK_END("comm_recv");
 
     std::copy(recv_data, recv_data + total_recv, local_data);
-    CALI_MARK_END("comm_full");
+    CALI_MARK_END("comm_large");
+    CALI_MARK_END("comm");
 
+    CALI_MARK_BEGIN("comp");
     max_val = *std::max_element(local_data, local_data + total_recv);
     for (int exp = 1; max_val / exp > 0; exp *= 10)
+    {
+        CALI_MARK_BEGIN("comp_small");
         counting_sort(local_data, total_recv, exp);
+        CALI_MARK_END("comp_small");
+    }
+    CALI_MARK_END("comp");
 
     // print data
     // for (int i = 0; i < comm_size; i++) {
@@ -308,7 +316,6 @@ void radix_sort(int* local_data, size_t local_size, int comm_size, int rank) {
     delete[] recv_offsets;
     delete[] send_data;
     delete[] recv_data;
-    CALI_MARK_END("whole_radix_sort");
 }
 
 #pragma endregion

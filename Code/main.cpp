@@ -10,12 +10,12 @@ int main(int argc, char *argv[]) {
     // Read arguments
     int algToRun; // 0 is bitonic, 1 is sample, 2 is merge, 3 is radix, 4 is column
     int data_generation; // 0 is sorted, 1 is 1% perturbed, 2 is random, 3 is reverse sorted
-    int total_elements;
+    int array_size;
     if (argc == 4)
     {
         algToRun = atoi(argv[1]);
         data_generation = atoi(argv[2]);
-        total_elements = atoi(argv[3]);
+        array_size = atoi(argv[3]);
     }
     else
     {
@@ -29,7 +29,6 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    int array_size = total_elements / comm_size;
     int* local_data = new int[array_size];
     
     // Add metadata collection
