@@ -1,10 +1,13 @@
 #include "sorting_algorithms.hpp"
-#include <iostream>
 #include "mpi.h"
-#include <caliper/cali.h>
 #include <algorithm>
-#include <vector>
+#include <bitset>
+#include <caliper/cali.h>
 #include <climits>
+#include <cmath>
+#include <cstring>
+#include <iostream>
+#include <vector>
 
 void sequential_sort(int* local_data, size_t local_data_size) {
     CALI_MARK_BEGIN("comp_small");
@@ -14,8 +17,87 @@ void sequential_sort(int* local_data, size_t local_data_size) {
 
 #pragma region bitonic_sort
 
-void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+// Basically the same as merge sort's merge, though this one keeps the output list in two arrays (to be send to different processes)
+void bitonic_merge(int* data1, int* data2, int* smaller_half, int* larger_half, size_t length) {
+    int index1 = 0;
+    int index2 = 0;
 
+    while (index1 < length && index2 < length) {
+        int output_index = index1 + index2;
+        bool choose_data1 = data1[index1] < data2[index2];
+
+        int value;
+        if (choose_data1) {
+            value = data1[index1];
+            index1++;
+        } else {
+            value = data2[index2];
+            index2++;
+        }
+
+        if (output_index < length) {
+            smaller_half[output_index] = value;
+        } else {
+            larger_half[output_index - length] = value;
+        }
+    }
+
+    // by this point we are guaranteed to be filling larger_half, since we have completely gone through one of the input arrays
+    while (index1 < length) {
+        int output_index = index1 + index2;
+        larger_half[output_index] = data1[index1];
+        index1++;
+    }
+
+    while (index2 < length) {
+        int output_index = index1 + index2;
+        larger_half[output_index] = data2[index2];
+        index2++;
+    }
+}
+
+// Assumes the total list size is a power of 2, and that comm_size is a power or 2 less than or equal to the list size, and that local_data size times comm_size is the total list size
+void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+    sequential_sort(local_data, local_data_size);
+
+    for (int level = 0; level < std::log2(comm_size); level++) {
+        std::bitset<32> rank_bitset(rank);
+        bool is_increasing = !rank_bitset.test(level + 1);
+
+        for (int current_bit = level; current_bit >= 0; current_bit--) {
+            std::bitset<32> other_rank_bitset(rank_bitset);
+            other_rank_bitset.flip(current_bit);
+            int other_rank = other_rank_bitset.to_ulong();
+
+            // While the data lives on two processes, only one needs to do the comparison.
+            // For now the lower rank process will always do the comparison, though it might speed up the algorithm if we try to balance who does the comparison more evenly.
+            bool is_doing_comparison = rank < other_rank;
+            if (is_doing_comparison) {
+                int* other_data = new int[local_data_size];
+                int* smaller_half = new int[local_data_size];
+                int* larger_half = new int[local_data_size];
+
+                MPI_Recv(other_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                bitonic_merge(local_data, other_data, smaller_half, larger_half, local_data_size);
+
+                if (is_increasing) {
+                    std::memcpy(local_data, smaller_half, local_data_size * sizeof(int));
+                    MPI_Send(larger_half, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
+                } else {
+                    std::memcpy(local_data, larger_half, local_data_size * sizeof(int));
+                    MPI_Send(smaller_half, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
+                }
+
+                delete other_data;
+                delete smaller_half;
+                delete larger_half;
+            } else {
+                MPI_Send(local_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
+                MPI_Recv(local_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            }
+        }
+    }
 }
 
 #pragma endregion
