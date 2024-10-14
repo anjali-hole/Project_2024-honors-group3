@@ -316,7 +316,40 @@ void radix_sort(int* local_data, size_t local_size, int comm_size, int rank) {
 #pragma region column_sort
 
 void column_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+    // local_data is the column
+    CALI_MARK_BEGIN("whole_column_sort");
+    int s = comm_size;
+    int r = local_data_size;
+
+    // step 1: sort column
+    sequential_sort(local_data)
+
+    // step 2: Transpose: access values in CMO and place them back into matrix in RMO
+    int* transposed_data = new int[local_data_size];
+    MPI_Alltoall(local_data, local_data_size, MPI_INT, transposed_data, local_data_size, MPI_INT, comm);
+    std::copy(transposed_data, transposed_data + local_data_size, local_data);
+    delete[] transposed_data;
+
+    // step 3: sort "column"
+    sequential_sort(local_data);
     
+    CALI_MARK_END("whole_column_sort");
+
+    // step 4: "untranspose"
+    std::vector<MPI_Request> send_requests(comm_size);
+    std::vector<MPI_Request> recv_requests(comm_size);
+    int* untransposed_data = new int[local_data_size];
+    for (int i = 0; i < comm_size; i++) {
+        int send_index = i * local_data_size;
+        int recv_index = i * local_data_size;
+        MPI_send(local_data + send_index, local_data_size, MPI_INT, i, 0, comm, &send_requests[i]);
+        MPI_recv(untransposed_data + recv_index, local_data_size, MPI_INT, i, 0, comm, &recv_requests[i]);
+    }
+    std::copy(untransposed_data, untransposed_data + local_data_size, local_data);
+    delete[] untransposed_data;
+
+    // step 5: sort column
+    sequential_sort(local_data)
 }
 
 #pragma endregion
