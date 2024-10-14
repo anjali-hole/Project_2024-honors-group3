@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     // Read arguments
     int algToRun; // 0 is bitonic, 1 is sample, 2 is merge, 3 is radix, 4 is column
     int data_generation; // 0 is sorted, 1 is 1% perturbed, 2 is random, 3 is reverse sorted
-    int array_size;
+    size_t array_size;
     if (argc == 4)
     {
         algToRun = atoi(argv[1]);
