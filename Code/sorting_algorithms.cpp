@@ -321,14 +321,34 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     int s = comm_size;
     int r = local_data_size;
 
+    //testing
+    std::cout << "(Pre Step 1)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
+
     // step 1: sort column
     sequential_sort(local_data)
+    //testing
+    std::cout << "(Post Step 1)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
 
     // step 2: Transpose: access values in CMO and place them back into matrix in RMO
     int* transposed_data = new int[local_data_size];
     MPI_Alltoall(local_data, local_data_size, MPI_INT, transposed_data, local_data_size, MPI_INT, comm);
     std::copy(transposed_data, transposed_data + local_data_size, local_data);
     delete[] transposed_data;
+
+    //testing
+    std::cout << "(Post Step 2)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
 
     // step 3: sort "column"
     sequential_sort(local_data);
@@ -348,8 +368,21 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     std::copy(untransposed_data, untransposed_data + local_data_size, local_data);
     delete[] untransposed_data;
 
+    //testing
+    std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
+
     // step 5: sort column
     sequential_sort(local_data)
+    //testing
+    std::cout << "(Post step 5)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
 }
 
 #pragma endregion
