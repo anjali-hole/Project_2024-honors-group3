@@ -360,8 +360,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     for (int i = 0; i < comm_size; i++) {
         int send_index = i * local_data_size;
         int recv_index = i * local_data_size;
-        MPI_Isend(local_data + send_index, local_data_size, MPI_INT, i, 0, comm, &send_requests[i]);
-        MPI_Irecv(untransposed_data + recv_index, local_data_size, MPI_INT, i, 0, comm, &recv_requests[i]);
+        MPI_Isend(local_data + send_index, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &send_requests[i]);
+        MPI_Irecv(untransposed_data + recv_index, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &recv_requests[i]);
     }
     std::copy(untransposed_data, untransposed_data + local_data_size, local_data);
     delete[] untransposed_data;
