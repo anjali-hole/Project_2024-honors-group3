@@ -340,7 +340,9 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     // step 2: Transpose: access values in CMO and place them back into matrix in RMO
     int* transposed_data = new int[local_data_size];
     MPI_Alltoall(local_data, local_data_size, MPI_INT, transposed_data, local_data_size, MPI_INT, MPI_COMM_WORLD);
+    std::cout << "alltoall finished for " << rank << std::endl;
     std::copy(transposed_data, transposed_data + local_data_size, local_data);
+    std::cout << "copy finished for " << rank << std::endl;
     delete[] transposed_data;
 
     //testing
