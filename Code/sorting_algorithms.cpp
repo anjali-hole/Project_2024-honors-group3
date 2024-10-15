@@ -354,6 +354,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     sequential_sort(local_data, local_data_size);
 
     // step 4: "untranspose"
+    std::vector<MPI_Request> send_requests(comm_size);
+    std::vector<MPI_Request> recv_requests(comm_size);
     int* untransposed_data = new int[local_data_size]; 
 
     for (int i = 0; i < comm_size; i++) {
