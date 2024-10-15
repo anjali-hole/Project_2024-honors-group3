@@ -354,17 +354,15 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     sequential_sort(local_data, local_data_size);
 
     // step 4: "untranspose"
-    std::vector<MPI_Request> send_requests(comm_size);
-    std::vector<MPI_Request> recv_requests(comm_size);
-    int* untransposed_data = new int[local_data_size];
+    int* untransposed_data = new int[local_data_size]; 
+
     for (int i = 0; i < comm_size; i++) {
-        int send_index = i * local_data_size;
-        int recv_index = i * local_data_size;
-        MPI_Isend(local_data + send_index, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &send_requests[i]);
-        MPI_Irecv(untransposed_data + recv_index, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &recv_requests[i]);
+        // Send and receive directly from/to the respective buffers
+        MPI_Isend(local_data, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &send_requests[i]);
+        MPI_Irecv(untransposed_data, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &recv_requests[i]);
     }
-    MPI_Waitall(s, send_requests.data(), MPI_STATUSES_IGNORE);
-    MPI_Waitall(s, recv_requests.data(), MPI_STATUSES_IGNORE);
+    MPI_Waitall(comm_size, send_requests.data(), MPI_STATUSES_IGNORE);
+    MPI_Waitall(comm_size, recv_requests.data(), MPI_STATUSES_IGNORE);
     std::copy(untransposed_data, untransposed_data + local_data_size, local_data);
     delete[] untransposed_data;
 
