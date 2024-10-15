@@ -300,21 +300,7 @@ void counting_sort(int* arr, int n, int exp) {
 }
 
 void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
-    CALI_MARK_BEGIN("comp");
-    CALI_MARK_BEGIN("comp_large");
-    // Find the maximum value in the local data to determine the number of digits and count sort each digit in local data
-    int max_val = *std::max_element(local_data, local_data + local_size);
-
-    for (long int exp = 1; max_val / exp > 0; exp *= 10)
-    {
-        CALI_MARK_BEGIN("comp_small");
-        counting_sort(local_data, local_size, exp);
-        CALI_MARK_END("comp_small");
-    }
-    CALI_MARK_END("comp_large");
-    CALI_MARK_END("comp");
-    
-    // Transfer data between processes such that data is sorted across all processes
+    // Transfer data between processes such that each process has a correct range of values
     int global_max, global_min;
     int local_max = *std::max_element(local_data, local_data + local_size);
     int local_min = *std::min_element(local_data, local_data + local_size);
@@ -323,6 +309,7 @@ void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
     MPI_Allreduce(&local_max, &global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
     MPI_Allreduce(&local_min, &global_min, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
     CALI_MARK_END("comm_small");
+    CALI_MARK_END("comm");
 
     int* send_counts = new int[comm_size]();
     int* send_offsets = new int[comm_size]();
@@ -356,6 +343,7 @@ void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
             send_data[index++] = buckets[i][j];
         }
     }
+    CALI_MARK_BEGIN("comm");
     CALI_MARK_BEGIN("comm_large");
     MPI_Alltoall(send_counts, 1, MPI_INT, recv_counts, 1, MPI_INT, MPI_COMM_WORLD);
 
@@ -375,10 +363,10 @@ void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
     local_size = total_recv;
     std::copy(recv_data, recv_data + total_recv, local_data);
 
-    // radix sort again now that all data are in correct processes
+    // radix sort now that all data are in correct processes
     CALI_MARK_BEGIN("comp");
     CALI_MARK_BEGIN("comp_large");
-    max_val = *std::max_element(local_data, local_data + total_recv);
+    int max_val = *std::max_element(local_data, local_data + total_recv);
     for (long int exp = 1; max_val / exp > 0; exp *= 10)
     {
         CALI_MARK_BEGIN("comp_small");
