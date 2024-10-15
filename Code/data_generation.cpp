@@ -23,6 +23,32 @@ void generate_sorted(int* local_data, size_t local_data_size, int comm_size, int
     CALI_MARK_END("data_init_runtime");
 }
 
+void generate_test_column(int* local_data, size_t local_data_size, int comm_size, int rank) {
+    CALI_MARK_BEGIN("data_init_runtime");
+    // Calculate the global start index for this rank
+    int matrix[27] = {
+        14, 3, 21, 24, 8, 26, 19, 10, 2,   // First column
+        25, 1, 12, 23, 13, 4, 17, 15, 20,  // Second column
+        9, 27, 7, 16, 18, 5, 22, 11, 6     // Third column
+    };
+
+    size_t global_start = rank * local_data_size;
+    
+    // Generate sorted data for this rank
+    for (size_t i = 0; i < local_data_size; ++i) {
+        local_data[i] = matrix[global_start + i];
+    }
+    //testing
+    //std::cout << std::endl;
+    //std::cout << "Rank " << rank << " generated data: ";
+    //for (size_t i = 0; i < local_data_size; ++i) {
+    //    std::cout << local_data[i] << " ";
+    //}
+    //std::cout << std::endl;
+
+    CALI_MARK_END("data_init_runtime");
+}
+
 void generate_sorted_1percent_perturbed(int* local_data, size_t local_data_size, int comm_size, int rank) {
     CALI_MARK_BEGIN("data_perturbed_init_runtime");
     
