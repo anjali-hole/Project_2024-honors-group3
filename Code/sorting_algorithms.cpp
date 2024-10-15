@@ -329,7 +329,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     std::cout << std::endl; 
 
     // step 1: sort column
-    sequential_sort(local_data)
+    sequential_sort(local_data, local_data_size);
     //testing
     std::cout << "(Post Step 1)Rank " << rank << " initial data: ";
     for (size_t i = 0; i < local_data_size; ++i) {
@@ -339,7 +339,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
 
     // step 2: Transpose: access values in CMO and place them back into matrix in RMO
     int* transposed_data = new int[local_data_size];
-    MPI_Alltoall(local_data, local_data_size, MPI_INT, transposed_data, local_data_size, MPI_INT, comm);
+    MPI_Alltoall(local_data, local_data_size, MPI_INT, transposed_data, local_data_size, MPI_INT, MPI_COMM_WORLD);
     std::copy(transposed_data, transposed_data + local_data_size, local_data);
     delete[] transposed_data;
 
@@ -351,7 +351,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     std::cout << std::endl; 
 
     // step 3: sort "column"
-    sequential_sort(local_data);
+    sequential_sort(local_data, local_data_size);
 
     // step 4: "untranspose"
     std::vector<MPI_Request> send_requests(comm_size);
@@ -360,8 +360,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     for (int i = 0; i < comm_size; i++) {
         int send_index = i * local_data_size;
         int recv_index = i * local_data_size;
-        MPI_send(local_data + send_index, local_data_size, MPI_INT, i, 0, comm, &send_requests[i]);
-        MPI_recv(untransposed_data + recv_index, local_data_size, MPI_INT, i, 0, comm, &recv_requests[i]);
+        MPI_Isend(local_data + send_index, local_data_size, MPI_INT, i, 0, comm, &send_requests[i]);
+        MPI_Irecv(untransposed_data + recv_index, local_data_size, MPI_INT, i, 0, comm, &recv_requests[i]);
     }
     std::copy(untransposed_data, untransposed_data + local_data_size, local_data);
     delete[] untransposed_data;
@@ -374,7 +374,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     std::cout << std::endl; 
 
     // step 5: sort column
-    sequential_sort(local_data)
+    sequential_sort(local_data, local_data_size);
     //testing
     std::cout << "(Post step 5)Rank " << rank << " initial data: ";
     for (size_t i = 0; i < local_data_size; ++i) {
