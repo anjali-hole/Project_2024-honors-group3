@@ -363,6 +363,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         MPI_Isend(local_data + send_index, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &send_requests[i]);
         MPI_Irecv(untransposed_data + recv_index, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &recv_requests[i]);
     }
+    MPI_Waitall(s, send_requests.data(), MPI_STATUSES_IGNORE);
+    MPI_Waitall(s, recv_requests.data(), MPI_STATUSES_IGNORE);
     std::copy(untransposed_data, untransposed_data + local_data_size, local_data);
     delete[] untransposed_data;
 
