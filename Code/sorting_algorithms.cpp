@@ -352,8 +352,6 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
 
     // step 3: sort "column"
     sequential_sort(local_data);
-    
-    CALI_MARK_END("whole_column_sort");
 
     // step 4: "untranspose"
     std::vector<MPI_Request> send_requests(comm_size);
@@ -383,6 +381,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         std::cout << local_data[i] << " ";
     }
     std::cout << std::endl; 
+    
+    CALI_MARK_END("whole_column_sort");
 }
 
 #pragma endregion

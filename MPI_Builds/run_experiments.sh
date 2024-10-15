@@ -3,19 +3,22 @@
 #Array for input sizes
 # TODO: Uncomment the line below for actual sizes
 # input_sizes=(65536 262144 1048576 4194304 16777216 67108864 268435456)
-input_sizes=(8 16 32 64 128 256 512)
+# input_sizes=(8 16 32 64 128 256 512)
+input_sizes=(27)
 
 # Array of input types
 # 0: Sorted, 1: 1% perturbed, 2: Random, 3: Reverse sorted
 # TODO: Add 1 and 2 after those functions are implemented
-input_types=(0 3)
+# input_types=(0 3)
+input_types=(2)
 
 # Array of number of processors
-num_procs=(2 4 8 16 32 64 128 256 512 1024)
+# num_procs=(2 4 8 16 32 64 128 256 512 1024)
+num_procs=(3)
 
 # Merge sort algorithm index
 #TODO: change this based on algorithm
-alg=2
+alg=4
 
 # Maximum processes per node
 max_procs_per_node=48
