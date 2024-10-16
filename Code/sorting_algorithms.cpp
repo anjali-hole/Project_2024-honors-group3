@@ -420,6 +420,9 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
 
     // step 8: "unshift"
     // shift back: 2->1, 1->0, 0->2
+
+    delete[] shift_buf;
+    delete[] receive_buf;
     
     CALI_MARK_END("whole_column_sort");
 }
