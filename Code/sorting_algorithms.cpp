@@ -437,7 +437,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
             // for last column, select second half of elements to move to last column
             target_rank = comm_size - 1;
             offset = (local_data_size / 2) * target_rank;
-            for(int i = half_local_size_ceil, i < local_data_size; ++i) {
+            for(int i = half_local_size_ceil; i < local_data_size; ++i) {
                 shift_buf[offset + (i - half_local_size_ceil)] = local_data[i];
             }
         }
