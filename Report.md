@@ -16,7 +16,7 @@
 - **Bitonic Sort (Peter)**: A divide-and-conquer algorithm implemented using MPI that sorts data into many bitonic sequences (the first half only increasing, the second half only decreasing). It then creates alternating increasing and decreasing sequences out of the bitonic sequences to create half as many bitonic sequences, but twice the size. It keeps repeating this process until there is one large bitonic sequence left, at which point it creates one final increasing sequence. For the parallel version I'm implementing, instead of one value each process will keep a sorted list, and when two processes compare lists the smaller sequence will hold a sorted list where all the elements are smaller than the elements in the bigger sequence.
 - **Sample Sort (Kyle)**: A divide-and-conquer algorithm implemented in MPI that splits the data into buckets based on data samples, sorts the buckets, and then recombines the data.
 - **Merge Sort (Anjali)**: A parallel divide-and-conquer algorithm implemented using MPI for efficient data distribution and merging where each process independently sorts a portion of the data, and MPI coordinates the merging of subarrays across multiple processors on the Grace cluster.
-- **Radix Sort (Yahya)**: A divide-and-conquer algorithm implemented with MPI that sorts an array of integers digit by digit, using counting and prefix sums instead of direct comparisons to determine sorted order. Data distribution is determined by digit values, with each process responsible for certain digits.
+- **Radix Sort (Yahya)**: A divide-and-conquer algorithm implemented with MPI that sorts an array of integers digit by digit, using a counting sort for each digit instead of direct comparisons to determine sorted order. Data distribution is determined by number values, with each process responsible for a certain range of values.
 - **Column Sort (Harsh)**:  A multi-step matrix manipulation algorithm implemented using MPI that sorts a matrix by its columns, redistributes it through a series of transpositions, and applies strategic global row shifts
 #### Team Communication
 - Team will communicate via Discord (for conferencing/meeting)
@@ -249,64 +249,82 @@ function main():
 
 #### Radix Sort
 ```
-function prefix_sum(local_counts, global_counts, array_size, communicator):
-    // get data from processes
-    temp = array with size array_size
-    MPI_Allreduce(local_counts, temp, array_size, MPI_INT, MPI_SUM, communicator)
+// Function to do simple counting sort by the digit place specified by exp
+function counting_sort(int arr, int n, int exp):
+    output is array size n
+    count is array of size 10
 
-    // compute prefix sums
-    global_counts[0] = temp[0]
-    for i from 1 to size:
-        global_counts[i] = global_counts[i - 1] + temp[i]
+    for i from 0 to n:
+        count[(arr[i] / exp) % 10]++
 
-function radix_sort(array, array_size):
-    rank = MPI_Comm_rank(MPI_COMM_WORLD)
-    numtasks = MPI_Comm_size(MPI_COMM_WORLD)
+    for i from 1 to 10:
+        count[i] += count[i - 1];
 
-    // determine how much data to send to each task
-    chunk_size = array_size / numtasks
-    local_chunk = array of size chunk_size
+    for i from n-1 to 0:
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    
 
-    // scatter data to processes
-    MPI_Scatter(array, chunk_size, MPI_INT, local_chunk, chunk_size, MPI_INT, 0, MPI_COMM_WORLD)
-
-    // find global max
-    local_max = max_element(local_chunk.begin(), local_chunk.end())
-    global_max = MPI_Allreduce(local_max, global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD)
-
-    while exp from 1, global_max / exp > 0, exp *= 10:
-
-        // count the number of each digit in the local chunk
-        local_count is an array of size 10
-        for i from 0 to chunk_size, i++:
-            local_count[(local_chunk[i] / exp) % 10]++
-
-        // compute prefix sum so we can find global positions
-        global_count is an array of size 10
-        prefix_sum(local_count, global_count, 10, MPI_COMM_WORLD)
-
-        // determine new locations for elements
-        new_chunk is an array of size chunk_size
-        position is an array of size 10
-        for i from 0 to 10:
-            position[i] = global_count[i] - local_count[i]
-        
-        // rearrange elements to new positions
-        for i from chunk_size-1 to 0:
-            index = (local_chunk[i] / exp) % 10
-            new_chunk[--position[index]] = local_chunk[i]
-
-        // redistribute globally sorted elements to tasks
-        MPI_Alltoall(new_chunk, chunk_size, MPI_INT, local_chunk, chunk_size, MPI_INT, MPI_COMM_WORLD)
+    for i from 0 to n:
+        arr[i] = output[i];
 
 
-        // gather sorted chunks in root task
-        if rank is 0:
-            sorted_array is an array of size array_size
-            MPI_Gather(local_chunk, chunk_size, MPI_INT, sorted_array, chunk_size, MPI_INT, 0, MPI_COMM_WORLD)
+function radix_sort(local_data, local_size, comm_size, rank)
+    // Transfer data between processes such that each process has a correct range of values
+    local_max = max value of local_data
+    local_min = min value of local_data
 
-        else:
-            MPI_Gather(local_chunk, chunk_size, MPI_INT, NULL, chunk_size, MPI_INT, 0, MPI_COMM_WORLD)
+    // get global max and min values to determine split of numbers
+    int global_max, global_min;
+    MPI_Allreduce(&local_max, &global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(&local_min, &global_min, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+
+    send_counts, send_offsets, recv_counts, recv_offsets are arrays of size comm_size
+
+    // calculate the range of values that each process will receive and send
+    range_size = (global_max - global_min + 1) / comm_size;
+
+    // vector to determine which data gets sent to which process
+    vector<vector<int>> buckets(comm_size);
+    for i from 0 to local_size:
+        value = local_data[i];
+        target_process = (value - global_min) / range_size;
+        if target_process >= comm_size:
+            target_process = comm_size - 1;
+        buckets[target_proc].push_back(value);
+
+    // send the data to all processes
+    total_send = 0;
+    for i from 0 to comm_size:
+        send_counts[i] = buckets[i].size();
+        send_offsets[i] = total_send;
+        total_send += send_counts[i];
+
+    send_data is array of size total_send
+    index = 0;
+    for i from 0 to comm_size:
+        for j from 0 to buckets[i].size()
+            send_data[index++] = buckets[i][j];
+
+    MPI_Alltoall(send_counts, 1, MPI_INT, recv_counts, 1, MPI_INT, MPI_COMM_WORLD);
+
+    // receive data from all processes
+    total_recv = 0;
+    for i from 0 to comm_size:
+        recv_offsets[i] = total_recv;
+        total_recv += recv_counts[i];
+
+    recv_data is array of size total_recv
+    MPI_Alltoallv(send_data, send_counts, send_offsets, MPI_INT, recv_data, recv_counts, recv_offsets, MPI_INT, MPI_COMM_WORLD);
+
+    // copy received data to local data
+    local_size = total_recv;
+    copy(recv_data, recv_data + total_recv, local_data);
+
+    // radix sort now that all data are in correct processes
+    local_max is max element from local data
+    for exp from 1 to local_max / exp > 0, multiplying by 10:
+        counting_sort(local_data, total_recv, exp);
 
 function main():
     // initialize MPI
@@ -316,7 +334,8 @@ function main():
 
     // provide input and sort
     input is array to sort
-    radix_sort(input)
+    input_size is input size
+    radix_sort(input, input_size, rank, size)
 
     // finalize MPI
     MPI_Finalize()
@@ -328,9 +347,8 @@ MPI_Comm_rank()
 MPI_Comm_size()
 MPI_Finalize()
 MPI_Allreduce()
-MPI_Scatter()
 MPI_Alltoall()
-MPI_Gather()
+MPI_Alltoallv()
 ```
 
 #### Column Sort
