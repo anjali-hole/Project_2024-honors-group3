@@ -333,16 +333,16 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     // step 2: Transpose: access values in CMO and place them back into matrix in RMO
     int* send_buf = new int[local_data_size];
     int subbuf_size = local_data_size / comm_size;
-    for(int i = 0; i < comm_size; ++i) {
+    for(int i = 0; i < local_data_size; ++i) {
         int process = i % comm_size;
-        std::cout << "Rank " << rank << " inserting " << i << " into " << (subbuf_size * process) + (i / comm_size) << std::endl;
+        // std::cout << "Rank " << rank << " inserting " << i << " into " << (subbuf_size * process) + (i / comm_size) << std::endl;
         send_buf[(subbuf_size * process) + (i / comm_size)] = local_data[i];
     }
-    std::cout << "send_buf for rank " << rank << ":"; 
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << send_buf[i] << " ";
-    }
-    std::cout << std::endl;
+    // std::cout << "send_buf for rank " << rank << ":"; 
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << send_buf[i] << " ";
+    // }
+    // std::cout << std::endl;
     MPI_Alltoall(send_buf, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
     delete[] send_buf;
 
@@ -360,20 +360,20 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     MPI_Alltoall(MPI_IN_PLACE, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
 
     //testing
-    // std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
-    // for (size_t i = 0; i < local_data_size; ++i) {
-    //     std::cout << local_data[i] << " ";
-    // }
-    // std::cout << std::endl; 
+    std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
 
     // step 5: sort column
     sequential_sort(local_data, local_data_size);
     //testing
-    // std::cout << "(Post step 5)Rank " << rank << " initial data: ";
-    // for (size_t i = 0; i < local_data_size; ++i) {
-    //     std::cout << local_data[i] << " ";
-    // }
-    // std::cout << std::endl; 
+    std::cout << "(Post step 5)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
 
     // step 6: "shift"
     // we shift whats needed to the correct process, but not in the order recommended
