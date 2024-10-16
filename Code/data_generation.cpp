@@ -90,6 +90,7 @@ bool check_data_sorted(int* local_data, size_t local_data_size, int comm_size, i
     // Check that all the local data is sorted
     for (size_t i = 0; i < local_data_size - 1; i++) {
         if (local_data[i] > local_data[i + 1]) {
+            std::cout << "Local data failed " << local_data[i] << " > " << local_data[i+1] << std::endl;
             CALI_MARK_END("correctness_check");
             return false;
         }
@@ -113,6 +114,7 @@ bool check_data_sorted(int* local_data, size_t local_data_size, int comm_size, i
         CALI_MARK_END("comm_small");
         CALI_MARK_END("comm");
         if (local_data[local_data_size - 1] > receivedNum) {
+            std::cout << "Gap failed " << local_data[local_data_size - 1] << " > " << receivedNum <<std::endl;
             CALI_MARK_END("correctness_check");
             return false;
         }

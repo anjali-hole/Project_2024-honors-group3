@@ -120,19 +120,30 @@ int** partition(int* data, size_t data_size, double oversample, int bucket_count
 }
 */ 
 
-void sample_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+void sample_sort(int*& local_data, size_t &local_data_size, int comm_size, int rank) {
+
     srand(time(NULL) * rank);
     constexpr size_t OVERSAMPLE_FACTOR = 3;
     
+    //Take samples from the local data
     int local_samples[OVERSAMPLE_FACTOR];
     for (size_t i = 0; i < OVERSAMPLE_FACTOR; ++i)
         local_samples[i] = local_data[rand() % local_data_size];
-
+    
+    //Gather samples into process 0
     int* oversampled;
-    int* splitters = new int[comm_size];
     int samples = OVERSAMPLE_FACTOR * comm_size;
     if (rank == 0) oversampled = new int[samples];
-    MPI_Gather(local_samples, OVERSAMPLE_FACTOR, MPI_INT, oversampled, samples, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(local_samples, OVERSAMPLE_FACTOR, MPI_INT, oversampled, OVERSAMPLE_FACTOR, MPI_INT, 0, MPI_COMM_WORLD);
+    if (rank == 0)
+    {
+      std::cout << "Gathered samples: ";
+      for (int i = 0; i < samples; ++i) std::cout << oversampled[i] << " ";
+      std::cout << std::endl;
+    }
+    
+    //Select splitters
+    int* splitters = new int[comm_size];
     if (rank == 0) {
         sequential_sort(oversampled, samples);
         for (size_t i = 1; i < comm_size; ++i)
@@ -140,32 +151,67 @@ void sample_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     }
     splitters[comm_size-1] = INT_MAX;
     MPI_Bcast(splitters, comm_size, MPI_INT, 0, MPI_COMM_WORLD);
-    std::vector<int>* buckets = new std::vector<int>[comm_size]; 
+    if (rank == 0)
+    {
+      std::cout << "Gathered splitters: ";
+      for (int i = 0; i < comm_size; ++i) std::cout << splitters[i] << " ";
+      std::cout << std::endl;
+    }
     
+    
+    
+    //Split local data into buckets based on splitters
+    std::vector<int>* buckets = new std::vector<int>[comm_size]; 
     for (size_t i = 0; i < local_data_size; ++i) {
         int bucket = std::lower_bound(splitters, splitters + comm_size, local_data[i]) - splitters;
-        buckets[bucket].push_back(i);
+        buckets[bucket].push_back(local_data[i]);
     }
 
     std::vector<int> local_bucket;
-    int copy_val;
     for (int i = 0; i < comm_size; ++i) {
         if (i == rank) { //Receive data from others 
-            for (int j = 0; i < comm_size; ++i) {
-                if (i == j) for (auto local_val : buckets[i]) local_bucket.push_back(local_val);
-                else {
-                    //Receive element count
-                    //Receive elements
+            std::cout << "Communicating for process " << rank << std::endl;
+            for (int j = 0; j < comm_size; ++j) {
+                if (i == j) local_bucket.insert(local_bucket.end(), buckets[i].begin(), buckets[i].end()); //Add this process' data
+                else { //Receive from other processes
+                    int element_count = 0;
+                    
+                    MPI_Recv(&element_count, 1, MPI_INT, j, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                    if (element_count != 0) {
+                        int curr_size = local_bucket.size();
+                        local_bucket.resize(curr_size + element_count);
+                        MPI_Recv(&local_bucket[curr_size], element_count, MPI_INT, j, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                    }
                 } 
             }
         }
-        else {
-            //Send element count
-            //Send elements
+        else { //Send to other processes
+            int element_count = buckets[i].size();
+            MPI_Send(&element_count, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            if (element_count != 0) MPI_Send(buckets[i].data(), element_count, MPI_INT, i, 0, MPI_COMM_WORLD);
         }
     }
     
     sequential_sort(local_bucket.data(), local_bucket.size());
+    
+    
+    
+    local_data_size = local_bucket.size();
+    delete[] local_data;
+    local_data = new int[local_data_size];
+    memcpy(local_data, local_bucket.data(), local_data_size * sizeof (int));
+    
+    //testing
+    std::cout << "Rank " << rank << " after local sort: ";
+     for (size_t i = 0; i < local_data_size; ++i) {
+            std::cout << local_data[i] << " ";
+     }
+      std::cout << std::endl;
+    
+    delete[] buckets;
+    delete[] splitters;
+    if (rank == 0) delete[] oversampled;
+    
 }
 
 #pragma endregion
