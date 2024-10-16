@@ -315,6 +315,10 @@ void radix_sort(int* local_data, size_t local_size, int comm_size, int rank) {
 
 #pragma region column_sort
 
+int ceiling(int a, int b) {
+    return (a + b - 1) / b;
+}
+
 void column_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
     // local_data is the column
     CALI_MARK_BEGIN("whole_column_sort");
@@ -382,7 +386,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         int* shift_buf = new int[shift_buf_size]();
 
         // Fill shift buf such that values that are sent to target proc are filled appropriately in their section, rest are 0
-        int start = std::ceil(local_data_size / 2);
+        int start = ceiling(local_data_size / 2);
         int target_rank = rank + 1;
         if (rank == comm_size - 1) {
             target_rank = 0;
@@ -390,19 +394,19 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         int offset = (local_data_size / 2) * target_rank;
 
         for(int i = start; i < local_data_size; ++i) {
-            shift_buf[offset + (i - std::ceil(local_data_size / 2))] = local_data[i];
+            shift_buf[offset + (i - ceiling(local_data_size / 2))] = local_data[i];
         }
 
         // Receive array of (local_data_size / 2) * comm_size, look for non-zero elements and place them at top of local_data
-        int* receive_buf = new int[shift_buf_size](0);
+        int* receive_buf = new int[shift_buf_size]();
         MPI_Alltoall(shift_buf, shift_buf_size, MPI_INT, receive_buf, shift_buf_size, MPI_INT, MPI_COMM_WORLD);
         int receive_rank = rank - 1;
         if (rank == 0) {
             receive_rank = comm_size - 1;
         }
         offset = receive_rank * (local_data_size / 2);
-        for(int i = std::ceil(local_data_size); i < local_data_size; ++i) {
-            local_data[i] = receive_buf[offset + i - std::ceil(local_data_size / 2)];
+        for(int i = ceiling(local_data_size); i < local_data_size; ++i) {
+            local_data[i] = receive_buf[offset + i - ceiling(local_data_size / 2)];
         }
         std::cout << "(Post step 6) Rank " << rank << " data: ";
             for (size_t i = 0; i < local_data_size; ++i) {
