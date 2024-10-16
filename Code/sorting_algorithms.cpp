@@ -401,7 +401,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         for (size_t i = 0; i < shift_buf_size; ++i) {
             std::cout << shift_buf[i] << " ";
         }
-        std::endl;
+        std::cout << std::endl;
         // Receive array of (local_data_size / 2) * comm_size, look for non-zero elements and place them at top of local_data
         int* receive_buf = new int[shift_buf_size]();
         MPI_Alltoall(shift_buf, shift_buf_size, MPI_INT, receive_buf, shift_buf_size, MPI_INT, MPI_COMM_WORLD);
@@ -413,7 +413,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         for (size_t i = 0; i < shift_buf_size; ++i) {
             std::cout << receive_buf[i] << " ";
         }
-        std::endl;
+        std::cout << std::endl;
         offset = receive_rank * (local_data_size / 2);
         for(int i = ceiling(local_data_size, 2); i < local_data_size; ++i) {
             local_data[i] = receive_buf[offset + i - ceiling(local_data_size, 2)];
@@ -422,7 +422,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         for (size_t i = 0; i < local_data_size; ++i) {
             std::cout << local_data[i] << " ";
         }
-        std::endl;
+        std::cout << std::endl;
 
     // step 7: everyone except process 0 sequential sort
     if (rank != 0){
