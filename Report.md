@@ -143,37 +143,36 @@ function main():
 
 #### Sample Sort
 ```
-// s: number of samples, m: number of buckets
-function partition(full_data, s, m)
-    // get samples
-    for sample = 0 to s-1:
-        samples.append(get_random_element(full_data))
-    quicksort(samples)
 
-    //select splitters
-    oversample = s/m
-    splitters = [-inf]
-    for splitter = 1 to m-1:
-        splitters.append(samples[floor(oversample*splitter)])
-    splitters.append(inf)
-
-    //Put data into buckets based on splitters
-    for element in full_data:
-        find j | splitters[j]<element<=splitters[j+1]
-        buckets[j].append(element)
-
-function main(data, samples):
+function main(data, data_size, oversample_factor):
 
     MPI_Init()
     rank = MPI_Comm_rank(MPI_COMM_WORLD)
     size = MPI_Comm_size(MPI_COMM_WORLD)
 
+    for sample = 0 to oversample_factor - 1
+        samples.add(data.get_random_element())
+
+    MPI_Gather(source = samples, count = oversample_factor, dest = oversample, root = MASTER)
     if (rank == MASTER):
-        buckets = partition(data, samples, size)
-    
-    MPI_Scatter(send = buckets, recv = local_data, root=0)
-    local_data = quicksort(local_data)
-    MPI_Gather(send = local_data, recv = sorted_data, root=0)
+        sort(oversample)
+        splitters[0] = -inf
+        for sample = 1 to size - 1:
+            splitters[sample] = oversample[sample * oversample_factor]
+        splitters[size] = inf
+    MPI_Bcast(splitters)
+
+    for each in data:
+        choose bucket | splitters[bucket] < bucket && splitters[bucket + 1] > bucket
+
+    for process = 0 to size - 1:
+        if process == rank:
+            for process = 0 to size - 1:
+                Recv(new_data.end, process)
+        Send(buckets[process], process)
+
+    local_data = new_data
+    sort(local_data)
 
     MPI_Finalize()
 
@@ -184,8 +183,10 @@ function main(data, samples):
     MPI_Init()
     MPI_Comm_size()
     MPI_Comm_rank()
-    MPI_Scatter()
-    MPI_Gather() 
+    MPI_Gather()
+    MPI_Bcast()
+    MPI_Send()
+    MPI_Recv()
     MPI_Finalize()
 
 #### Merge Sort
