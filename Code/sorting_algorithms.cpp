@@ -397,7 +397,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
             shift_buf[offset + (i - ceiling(local_data_size, 2))] = local_data[i];
         }
 
-        std::cout << "Shift buf for Rank " << rank << " data: " <<;
+        std::cout << "Shift buf for Rank " << rank << " data: ";
         for (size_t i = 0; i < shift_buf_size; ++i) {
             std::cout << shift_buf[i] << " ";
         }
