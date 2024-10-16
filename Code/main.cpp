@@ -3,9 +3,14 @@
 #include "mpi.h"
 #include <cstdlib>  // For atoi
 #include <caliper/cali.h>
+#include <caliper/cali-manager.h>
 #include <adiak.hpp>
 
 int main(int argc, char *argv[]) {
+    MPI_Init(&argc,&argv);
+    cali::ConfigManager mgr;
+    mgr.start();
+
     CALI_MARK_BEGIN("main");
     // Read arguments
     int algToRun; // 0 is bitonic, 1 is sample, 2 is merge, 3 is radix, 4 is column
@@ -26,7 +31,6 @@ int main(int argc, char *argv[]) {
 
     // Get comm_size, rank, and allocate array for local data
     int comm_size, rank;
-    MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int* local_data = new int[array_size];
@@ -124,7 +128,12 @@ int main(int argc, char *argv[]) {
     CALI_MARK_END("correctness_check");
 
     delete[] local_data;
-    MPI_Finalize();
+    
     CALI_MARK_END("main");
+    mgr.stop();
+    mgr.flush();
+    
+    MPI_Finalize();
+    
     return 0;
 }
