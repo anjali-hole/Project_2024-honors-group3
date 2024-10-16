@@ -344,6 +344,11 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         int process = i % comm_size;
         send_buf[(subbuf_size * process) + (i / comm_size)] = local_data[i];
     }
+    std::cout << "send_buf for rank " << rank << ":"; 
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << send_buf[i] << " ";
+    }
+    std::cout << std::endl;
     MPI_Alltoall(send_buf, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
     delete[] send_buf;
 
