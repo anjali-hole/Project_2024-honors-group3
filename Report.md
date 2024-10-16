@@ -580,10 +580,10 @@ CALI_MARK_END("comp");
 ```
 
 ### 3b. Collect Metadata
-#### Bitonic Sort Calltree
+#### Bitonic Sort Metadata
 ```
 ```
-#### Sample Sort Calltree
+#### Sample Sort Metadata
 ```
 ```
 #### Merge Sort Metadata
@@ -599,10 +599,10 @@ CALI_MARK_END("comp");
 
 
 ```
-#### Radix Sort Calltree
+#### Radix Sort Metadata
 ```
 ```
-#### Column Sort Calltree
+#### Column Sort Metadata
 ```
 ```
 
