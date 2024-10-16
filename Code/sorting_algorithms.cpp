@@ -335,6 +335,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     int subbuf_size = local_data_size / comm_size;
     for(int i = 0; i < comm_size; ++i) {
         int process = i % comm_size;
+        std::cout << "Rank " << rank << " inserting " << i << " into " << (subbuf_size * process) + (i / comm_size) << std::endl;
         send_buf[(subbuf_size * process) + (i / comm_size)] = local_data[i];
     }
     std::cout << "send_buf for rank " << rank << ":"; 
