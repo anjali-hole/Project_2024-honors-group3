@@ -345,7 +345,6 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         send_buf[(subbuf_size * process) + (i / comm_size)] = local_data[i];
     }
     MPI_Alltoall(send_buf, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
-    std::copy(transposed_data, transposed_data + local_data_size, local_data);
     delete[] send_buf;
 
     //testing
