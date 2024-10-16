@@ -3,19 +3,24 @@
 #include "mpi.h"
 #include <cstdlib>  // For atoi
 #include <caliper/cali.h>
+#include <caliper/cali-manager.h>
 #include <adiak.hpp>
 
 int main(int argc, char *argv[]) {
+    MPI_Init(&argc,&argv);
+    cali::ConfigManager mgr;
+    mgr.start();
+
     CALI_MARK_BEGIN("main");
     // Read arguments
     int algToRun; // 0 is bitonic, 1 is sample, 2 is merge, 3 is radix, 4 is column
     int data_generation; // 0 is sorted, 1 is 1% perturbed, 2 is random, 3 is reverse sorted
-    int total_elements;
+    size_t array_size;
     if (argc == 4)
     {
         algToRun = atoi(argv[1]);
         data_generation = atoi(argv[2]);
-        total_elements = atoi(argv[3]);
+        array_size = atoi(argv[3]);
     }
     else
     {
@@ -26,10 +31,8 @@ int main(int argc, char *argv[]) {
 
     // Get comm_size, rank, and allocate array for local data
     int comm_size, rank;
-    MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    int array_size = total_elements / comm_size;
     int* local_data = new int[array_size];
     
     // Add metadata collection
@@ -84,7 +87,6 @@ int main(int argc, char *argv[]) {
 
 
     // Call specified sorting algorithm
-    CALI_MARK_BEGIN("comp");
     if (algToRun == 0)
     {
         bitonic_sort(local_data, array_size, comm_size, rank);
@@ -108,13 +110,10 @@ int main(int argc, char *argv[]) {
     else
     {
         printf("\n Please provide a valid sorting algorithm");
-        CALI_MARK_END("comp");
         CALI_MARK_END("main");
         return 1;
     }
-    CALI_MARK_END("comp");
 
-    CALI_MARK_BEGIN("correctness_check");
     // Check that data is sorted
     if (check_data_sorted(local_data, array_size, comm_size, rank))
     {
@@ -124,10 +123,14 @@ int main(int argc, char *argv[]) {
     {
         printf("\n Data is not sorted");
     }
-    CALI_MARK_END("correctness_check");
 
     delete[] local_data;
-    MPI_Finalize();
+    
     CALI_MARK_END("main");
+    mgr.stop();
+    mgr.flush();
+    
+    MPI_Finalize();
+    
     return 0;
 }

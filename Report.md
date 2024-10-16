@@ -16,7 +16,7 @@
 - **Bitonic Sort (Peter)**: A divide-and-conquer algorithm implemented using MPI that sorts data into many bitonic sequences (the first half only increasing, the second half only decreasing). It then creates alternating increasing and decreasing sequences out of the bitonic sequences to create half as many bitonic sequences, but twice the size. It keeps repeating this process until there is one large bitonic sequence left, at which point it creates one final increasing sequence. For the parallel version I'm implementing, instead of one value each process will keep a sorted list, and when two processes compare lists the smaller sequence will hold a sorted list where all the elements are smaller than the elements in the bigger sequence.
 - **Sample Sort (Kyle)**: A divide-and-conquer algorithm implemented in MPI that splits the data into buckets based on data samples, sorts the buckets, and then recombines the data.
 - **Merge Sort (Anjali)**: A parallel divide-and-conquer algorithm implemented using MPI for efficient data distribution and merging where each process independently sorts a portion of the data, and MPI coordinates the merging of subarrays across multiple processors on the Grace cluster.
-- **Radix Sort (Yahya)**: A divide-and-conquer algorithm implemented with MPI that sorts an array of integers digit by digit, using counting and prefix sums instead of direct comparisons to determine sorted order. Data distribution is determined by digit values, with each process responsible for certain digits.
+- **Radix Sort (Yahya)**: A divide-and-conquer algorithm implemented with MPI that sorts an array of integers digit by digit, using a counting sort for each digit instead of direct comparisons to determine sorted order. Data distribution is determined by number values, with each process responsible for a certain range of values.
 - **Column Sort (Harsh)**:  A multi-step matrix manipulation algorithm implemented using MPI that sorts a matrix by its columns, redistributes it through a series of transpositions, and applies strategic global row shifts
 #### Team Communication
 - Team will communicate via Discord (for conferencing/meeting)
@@ -143,37 +143,36 @@ function main():
 
 #### Sample Sort
 ```
-// s: number of samples, m: number of buckets
-function partition(full_data, s, m)
-    // get samples
-    for sample = 0 to s-1:
-        samples.append(get_random_element(full_data))
-    quicksort(samples)
 
-    //select splitters
-    oversample = s/m
-    splitters = [-inf]
-    for splitter = 1 to m-1:
-        splitters.append(samples[floor(oversample*splitter)])
-    splitters.append(inf)
-
-    //Put data into buckets based on splitters
-    for element in full_data:
-        find j | splitters[j]<element<=splitters[j+1]
-        buckets[j].append(element)
-
-function main(data, samples):
+function main(data, data_size, oversample_factor):
 
     MPI_Init()
     rank = MPI_Comm_rank(MPI_COMM_WORLD)
     size = MPI_Comm_size(MPI_COMM_WORLD)
 
+    for sample = 0 to oversample_factor - 1
+        samples.add(data.get_random_element())
+
+    MPI_Gather(source = samples, count = oversample_factor, dest = oversample, root = MASTER)
     if (rank == MASTER):
-        buckets = partition(data, samples, size)
-    
-    MPI_Scatter(send = buckets, recv = local_data, root=0)
-    local_data = quicksort(local_data)
-    MPI_Gather(send = local_data, recv = sorted_data, root=0)
+        sort(oversample)
+        splitters[0] = -inf
+        for sample = 1 to size - 1:
+            splitters[sample] = oversample[sample * oversample_factor]
+        splitters[size] = inf
+    MPI_Bcast(splitters)
+
+    for each in data:
+        choose bucket | splitters[bucket] < bucket && splitters[bucket + 1] > bucket
+
+    for process = 0 to size - 1:
+        if process == rank:
+            for process = 0 to size - 1:
+                Recv(new_data.end, process)
+        Send(buckets[process], process)
+
+    local_data = new_data
+    sort(local_data)
 
     MPI_Finalize()
 
@@ -184,8 +183,10 @@ function main(data, samples):
     MPI_Init()
     MPI_Comm_size()
     MPI_Comm_rank()
-    MPI_Scatter()
-    MPI_Gather() 
+    MPI_Gather()
+    MPI_Bcast()
+    MPI_Send()
+    MPI_Recv()
     MPI_Finalize()
 
 #### Merge Sort
@@ -249,64 +250,82 @@ function main():
 
 #### Radix Sort
 ```
-function prefix_sum(local_counts, global_counts, array_size, communicator):
-    // get data from processes
-    temp = array with size array_size
-    MPI_Allreduce(local_counts, temp, array_size, MPI_INT, MPI_SUM, communicator)
+// Function to do simple counting sort by the digit place specified by exp
+function counting_sort(int arr, int n, int exp):
+    output is array size n
+    count is array of size 10
 
-    // compute prefix sums
-    global_counts[0] = temp[0]
-    for i from 1 to size:
-        global_counts[i] = global_counts[i - 1] + temp[i]
+    for i from 0 to n:
+        count[(arr[i] / exp) % 10]++
 
-function radix_sort(array, array_size):
-    rank = MPI_Comm_rank(MPI_COMM_WORLD)
-    numtasks = MPI_Comm_size(MPI_COMM_WORLD)
+    for i from 1 to 10:
+        count[i] += count[i - 1];
 
-    // determine how much data to send to each task
-    chunk_size = array_size / numtasks
-    local_chunk = array of size chunk_size
+    for i from n-1 to 0:
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    
 
-    // scatter data to processes
-    MPI_Scatter(array, chunk_size, MPI_INT, local_chunk, chunk_size, MPI_INT, 0, MPI_COMM_WORLD)
-
-    // find global max
-    local_max = max_element(local_chunk.begin(), local_chunk.end())
-    global_max = MPI_Allreduce(local_max, global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD)
-
-    while exp from 1, global_max / exp > 0, exp *= 10:
-
-        // count the number of each digit in the local chunk
-        local_count is an array of size 10
-        for i from 0 to chunk_size, i++:
-            local_count[(local_chunk[i] / exp) % 10]++
-
-        // compute prefix sum so we can find global positions
-        global_count is an array of size 10
-        prefix_sum(local_count, global_count, 10, MPI_COMM_WORLD)
-
-        // determine new locations for elements
-        new_chunk is an array of size chunk_size
-        position is an array of size 10
-        for i from 0 to 10:
-            position[i] = global_count[i] - local_count[i]
-        
-        // rearrange elements to new positions
-        for i from chunk_size-1 to 0:
-            index = (local_chunk[i] / exp) % 10
-            new_chunk[--position[index]] = local_chunk[i]
-
-        // redistribute globally sorted elements to tasks
-        MPI_Alltoall(new_chunk, chunk_size, MPI_INT, local_chunk, chunk_size, MPI_INT, MPI_COMM_WORLD)
+    for i from 0 to n:
+        arr[i] = output[i];
 
 
-        // gather sorted chunks in root task
-        if rank is 0:
-            sorted_array is an array of size array_size
-            MPI_Gather(local_chunk, chunk_size, MPI_INT, sorted_array, chunk_size, MPI_INT, 0, MPI_COMM_WORLD)
+function radix_sort(local_data, local_size, comm_size, rank)
+    // Transfer data between processes such that each process has a correct range of values
+    local_max = max value of local_data
+    local_min = min value of local_data
 
-        else:
-            MPI_Gather(local_chunk, chunk_size, MPI_INT, NULL, chunk_size, MPI_INT, 0, MPI_COMM_WORLD)
+    // get global max and min values to determine split of numbers
+    int global_max, global_min;
+    MPI_Allreduce(&local_max, &global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(&local_min, &global_min, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+
+    send_counts, send_offsets, recv_counts, recv_offsets are arrays of size comm_size
+
+    // calculate the range of values that each process will receive and send
+    range_size = (global_max - global_min + 1) / comm_size;
+
+    // vector to determine which data gets sent to which process
+    vector<vector<int>> buckets(comm_size);
+    for i from 0 to local_size:
+        value = local_data[i];
+        target_process = (value - global_min) / range_size;
+        if target_process >= comm_size:
+            target_process = comm_size - 1;
+        buckets[target_proc].push_back(value);
+
+    // send the data to all processes
+    total_send = 0;
+    for i from 0 to comm_size:
+        send_counts[i] = buckets[i].size();
+        send_offsets[i] = total_send;
+        total_send += send_counts[i];
+
+    send_data is array of size total_send
+    index = 0;
+    for i from 0 to comm_size:
+        for j from 0 to buckets[i].size()
+            send_data[index++] = buckets[i][j];
+
+    MPI_Alltoall(send_counts, 1, MPI_INT, recv_counts, 1, MPI_INT, MPI_COMM_WORLD);
+
+    // receive data from all processes
+    total_recv = 0;
+    for i from 0 to comm_size:
+        recv_offsets[i] = total_recv;
+        total_recv += recv_counts[i];
+
+    recv_data is array of size total_recv
+    MPI_Alltoallv(send_data, send_counts, send_offsets, MPI_INT, recv_data, recv_counts, recv_offsets, MPI_INT, MPI_COMM_WORLD);
+
+    // copy received data to local data
+    local_size = total_recv;
+    copy(recv_data, recv_data + total_recv, local_data);
+
+    // radix sort now that all data are in correct processes
+    local_max is max element from local data
+    for exp from 1 to local_max / exp > 0, multiplying by 10:
+        counting_sort(local_data, total_recv, exp);
 
 function main():
     // initialize MPI
@@ -316,7 +335,8 @@ function main():
 
     // provide input and sort
     input is array to sort
-    radix_sort(input)
+    input_size is input size
+    radix_sort(input, input_size, rank, size)
 
     // finalize MPI
     MPI_Finalize()
@@ -328,9 +348,8 @@ MPI_Comm_rank()
 MPI_Comm_size()
 MPI_Finalize()
 MPI_Allreduce()
-MPI_Scatter()
 MPI_Alltoall()
-MPI_Gather()
+MPI_Alltoallv()
 ```
 
 #### Column Sort
@@ -451,6 +470,66 @@ MPI_Finalize()
 - Memory usage
   
 ### 3a. Caliper instrumentation
+#### Bitonic Sort Calltree
+```
+```
+#### Sample Sort Calltree
+```
+```
+#### Merge Sort Calltree
+```
+0.910 main
+├─ 0.023 data_init_runtime
+│  └─ 0.023 data_perturbed_init_runtime
+│     └─ 0.017 data_init_runtime
+├─ 0.591 comp
+│  ├─ 0.444 comp_large
+│  └─ 0.146 comp_small
+├─ 0.059 comm
+│  ├─ 0.013 comm_small
+│  │  └─ 0.013 MPI_Sendrecv
+│  └─ 0.046 comm_large
+│     └─ 0.046 MPI_Sendrecv
+└─ 0.011 correctness_check
+   └─ 0.001 comm
+      └─ 0.001 comm_small
+         ├─ 0.000 MPI_Recv
+         └─ 0.000 MPI_Send
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.003 MPI_Comm_dup
+
+```
+#### Radix Sort Calltree
+```
+1.321 main
+├─ 0.091 data_init_runtime
+│  └─ 0.091 data_init_runtime
+├─ 0.049 comm
+│  ├─ 0.008 comm_small
+│  │  └─ 0.008 MPI_Allreduce
+│  └─ 0.040 comm_large
+│     ├─ 0.003 MPI_Alltoall
+│     └─ 0.037 MPI_Alltoallv
+├─ 0.910 comp
+│  └─ 0.897 comp_large
+└─ 0.021 correctness_check
+   └─ 0.011 comm
+      └─ 0.011 comm_small
+         ├─ 0.011 MPI_Recv
+         └─ 0.000 MPI_Send
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.131 MPI_Comm_dup
+```
+#### Column Sort Calltree
+```
+```
+
+
+Delete the stuff below:
 Please use the caliper build `/scratch/group/csce435-f24/Caliper/caliper/share/cmake/caliper` 
 (same as lab2 build.sh) to collect caliper files for each experiment you run.
 
@@ -521,6 +600,83 @@ CALI_MARK_END("comp");
 ```
 
 ### 3b. Collect Metadata
+#### Bitonic Sort Metadata
+```
+```
+#### Sample Sort Metadata
+```
+```
+#### Merge Sort Metadata
+
+| **Metadata Key**            | **Value**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **cali.caliper.version**    | 2.11.0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **mpi.world.size**          | 32                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **spot.metrics**            | min#inclusive#sum#time.duration, max#inclusive#sum#time.duration, avg#inclusive#sum#time.duration, sum#inclusive#sum#time.duration, variance#inclusive#sum#time.duration, min#min#aggregate.slot, min#sum#rc.count, avg#sum#rc.count, max#sum#rc.count, sum#sum#rc.count, min#scale#sum#time.duration.ns, max#scale#sum#time.duration.ns, avg#scale#sum#time.duration.ns, sum#scale#sum#time.duration.ns |
+| **spot.timeseries.metrics** | time.variance, profile.mpi, node.order, region.count, time.exclusive                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **spot.format.version**     | 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **spot.options**            | regionprofile                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **spot.channels**           | spot                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **cali.channel**            | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **spot:node.order**         | p32-a4194304.cali                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **spot:output**             | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **spot:profile.mpi**        | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **spot:region.count**       | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **spot:time.exclusive**     | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **spot:time.variance**      | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **launchdate**              | 1729116474                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **libraries**               | /scratch/group/csce435-f24/Caliper/caliper/lib64/libcaliper.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/libmpicxx.so.12, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/release/libmpi.so.12, /lib64/librt.so.1, /lib64/libpthread.so.0, /lib64/libdl.so.2, /sw/eb/sw/GCCcore/8.3.0/lib64/libstdc++.so.6, /lib64/libm.so.6, /sw/eb/sw/GCCcore/8.3.0/lib64/libgcc_s.so.1, /lib64/libc.so.6, /sw/eb/sw/CUDA/12.4.0/extras/CUPTI/lib64/libcupti.so.12, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpapi.so.6.0, /lib64/ld-linux-x86-64.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/libfabric.so.1, /lib64/libutil.so.1, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpfm.so.4, /lib64/libnuma.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libshm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libmlx-fi.so, /lib64/libucp.so.0, /sw/eb/sw/zlib/1.2.11-GCCcore-8.3.0/lib/libz.so.1, /usr/lib64/libuct.so.0, /usr/lib64/libucs.so.0, /usr/lib64/libucm.so.0, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libverbs-fi.so, /lib64/librdmacm.so.1, /lib64/libibverbs.so.1, /lib64/libnl-3.so.200, /lib64/libnl-route-3.so.200, /usr/lib64/libibverbs/libmlx5-rdmav34.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libpsmx2-fi.so, /lib64/libpsm2.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libsockets-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/librxm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libtcp-fi.so, /usr/lib64/ucx/libuct_ib.so.0, /usr/lib64/ucx/libuct_rdmacm.so.0, /usr/lib64/ucx/libuct_cma.so.0, /usr/lib64/ucx/libuct_knem.so.0, /usr/lib64/ucx/libuct_xpmem.so.0, /usr/lib64/libxpmem.so.0                                                                                                                                                                                                                                                                       |
+| **cmdline**                 | ./main, 2, 1, 4194304                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **cluster**                 | c                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **algorithm**               | merge                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **programming_model**       | mpi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **data_type**               | int                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **size_of_data_type**       | 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **input_size**              | 4194304                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **input_type**              | 1_perc_perturbed                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **num_procs**               | 32                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **scalability**             | strong                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **group_num**               | 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **implementation_source**   | handwritten                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+#### Radix Sort Metadata
+| Metadata Key                | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| cali.caliper.version         | 2.11.0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| mpi.world.size               | 32                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| spot.metrics                 | min#inclusive#sum#time.duration,max#inclusive#sum#time.duration,avg#inclusive#sum#time.duration,sum#inclusive#sum#time.duration,variance#inclusive#sum#time.duration,min#min#aggregate.slot,min#sum#rc.count,avg#sum#rc.count,max#sum#rc.count,sum#sum#rc.count,min#scale#sum#time.duration.ns,max#scale#sum#time.duration.ns,avg#scale#sum#time.duration.ns,sum#scale#sum#time.duration.ns                                                                                                                    |
+| spot.timeseries.metrics      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| spot.format.version          | 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| spot.options                 | time.variance,profile.mpi,node.order,region.count,time.exclusive                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| spot.channels                | regionprofile                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| cali.channel                 | spot                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| spot:node.order              | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| spot:output                  | p32-a4194304.cali                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| spot:profile.mpi             | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| spot:region.count            | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| spot:time.exclusive          | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| spot:time.variance           | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| launchdate                   | 1729119981                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| libraries                    | [/scratch/group/csce435-f24/Caliper/caliper/lib64/libcaliper.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/libmpicxx.so.12, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/release/libmpi.so.12, /lib64/librt.so.1, /lib64/libpthread.so.0, /lib64/libdl.so.2, /sw/eb/sw/GCCcore/8.3.0/lib64/libstdc++.so.6, /lib64/libm.so.6, /sw/eb/sw/GCCcore/8.3.0/lib64/libgcc_s.so.1, /lib64/libc.so.6, /sw/eb/sw/CUDA/12.4.0/extras/CUPTI/lib64/libcupti.so.12, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpapi.so.6.0, /lib64/ld-linux-x86-64.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/libfabric.so.1, /lib64/libutil.so.1, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpfm.so.4, /lib64/libnuma.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libshm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libmlx-fi.so, /lib64/libucp.so.0, /sw/eb/sw/zlib/1.2.11-GCCcore-8.3.0/lib/libz.so.1, /usr/lib64/libuct.so.0, /usr/lib64/libucs.so.0, /usr/lib64/libucm.so.0, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libverbs-fi.so, /lib64/librdmacm.so.1, /lib64/libibverbs.so.1, /lib64/libnl-3.so.200, /lib64/libnl-route-3.so.200, /usr/lib64/libibverbs/libmlx5-rdmav34.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libpsmx2-fi.so, /lib64/libpsm2.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libsockets-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/librxm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libtcp-fi.so, /usr/lib64/ucx/libuct_ib.so.0, /usr/lib64/ucx/libuct_rdmacm.so.0, /usr/lib64/ucx/libuct_cma.so.0, /usr/lib64/ucx/libuct_knem.so.0, /usr/lib64/ucx/libuct_xpmem.so.0, /usr/lib64/libxpmem.so.0] |
+| cmdline                      | [./main, 3, 2, 4194304]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| cluster                      | c                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| algorithm                    | radix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| programming_model            | mpi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| data_type                    | int                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| size_of_data_type            | 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| input_size                   | 4194304                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| input_type                   | Random                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| num_procs                    | 32                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| scalability                  | strong                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| group_num                    | 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| implementation_source        | handwritten                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+#### Column Sort Metadata
+```
+```
+
+
+Delete the stuff below:
 
 Have the following code in your programs to collect metadata:
 ```
