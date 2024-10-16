@@ -338,12 +338,15 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     std::cout << std::endl; 
 
     // step 2: Transpose: access values in CMO and place them back into matrix in RMO
-    int* transposed_data = new int[local_data_size];
-    MPI_Alltoall(local_data, local_data_size, MPI_INT, transposed_data, local_data_size, MPI_INT, MPI_COMM_WORLD);
-    std::cout << "alltoall finished for " << rank << std::endl;
+    int* send_buf = new int[local_data_size];
+    int subbuf_size = local_data_size / comm_size;
+    for(int i = 0; i < comm_size; ++i) {
+        int process = i % comm_size;
+        send_buf[(subbuf_size * process) + (i / comm_size)] = local_data[i];
+    }
+    MPI_Alltoall(send_buf, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
     std::copy(transposed_data, transposed_data + local_data_size, local_data);
-    std::cout << "copy finished for " << rank << std::endl;
-    delete[] transposed_data;
+    delete[] send_buf;
 
     //testing
     std::cout << "(Post Step 2)Rank " << rank << " initial data: ";
@@ -356,19 +359,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     sequential_sort(local_data, local_data_size);
 
     // step 4: "untranspose"
-    std::vector<MPI_Request> send_requests(comm_size);
-    std::vector<MPI_Request> recv_requests(comm_size);
-    int* untransposed_data = new int[local_data_size]; 
-
-    for (int i = 0; i < comm_size; i++) {
-        // Send and receive directly from/to the respective buffers
-        MPI_Isend(local_data, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &send_requests[i]);
-        MPI_Irecv(untransposed_data, local_data_size, MPI_INT, i, 0, MPI_COMM_WORLD, &recv_requests[i]);
-    }
-    MPI_Waitall(comm_size, send_requests.data(), MPI_STATUSES_IGNORE);
-    MPI_Waitall(comm_size, recv_requests.data(), MPI_STATUSES_IGNORE);
-    std::copy(untransposed_data, untransposed_data + local_data_size, local_data);
-    delete[] untransposed_data;
+    MPI_Alltoall(MPI_IN_PLACE, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
 
     //testing
     std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
@@ -385,6 +376,18 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         std::cout << local_data[i] << " ";
     }
     std::cout << std::endl; 
+
+    // step 6: "shift"
+    // we shift whats needed to the correct process, but not in the order recommended
+    // 0->1, 1->2, 2->0
+
+    // step 7: everyone except process 0 sequential sort
+    if (rank != 0){
+        sequential_sort(local_data, local_data_size);
+    }
+
+    // step 8: "unshift"
+    // shift back: 2->1, 1->0, 0->2
     
     CALI_MARK_END("whole_column_sort");
 }
