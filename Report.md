@@ -470,6 +470,46 @@ MPI_Finalize()
 - Memory usage
   
 ### 3a. Caliper instrumentation
+#### Bitonic Sort Calltree
+```
+```
+#### Sample Sort Calltree
+```
+```
+#### Merge Sort Calltree
+```
+0.910 main
+├─ 0.023 data_init_runtime
+│  └─ 0.023 data_perturbed_init_runtime
+│     └─ 0.017 data_init_runtime
+├─ 0.591 comp
+│  ├─ 0.444 comp_large
+│  └─ 0.146 comp_small
+├─ 0.059 comm
+│  ├─ 0.013 comm_small
+│  │  └─ 0.013 MPI_Sendrecv
+│  └─ 0.046 comm_large
+│     └─ 0.046 MPI_Sendrecv
+└─ 0.011 correctness_check
+   └─ 0.001 comm
+      └─ 0.001 comm_small
+         ├─ 0.000 MPI_Recv
+         └─ 0.000 MPI_Send
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.003 MPI_Comm_dup
+
+```
+#### Radix Sort Calltree
+```
+```
+#### Column Sort Calltree
+```
+```
+
+
+Delete the stuff below:
 Please use the caliper build `/scratch/group/csce435-f24/Caliper/caliper/share/cmake/caliper` 
 (same as lab2 build.sh) to collect caliper files for each experiment you run.
 
@@ -540,6 +580,30 @@ CALI_MARK_END("comp");
 ```
 
 ### 3b. Collect Metadata
+#### Bitonic Sort Metadata
+```
+```
+#### Sample Sort Metadata
+```
+```
+#### Merge Sort Metadata
+| nid                                             | spot.channel | Min time/rank | Max time/rank | Avg time/rank | Total time | Variance time/rank | Calls/rank (min) | Calls/rank (avg) | Calls/rank (max) | Calls/rank (total) | Min time/rank (exc) | Max time/rank (exc) | Avg time/rank (exc) | Total time (exc) | name                           | num_procs |
+|-------------------------------------------------|--------------|----------------|----------------|----------------|------------|---------------------|-------------------|-------------------|-------------------|---------------------|-----------------------|-----------------------|-----------------------|-------------------|--------------------------------|-----------|
+| {'name': 'main', 'type': 'function'}           | 4294640006   | 1.0            | regionprofile  | 0.906205       | 29.119751  | 0.000005            | 1.0               | 1.0               | 1.0               | 32.0                | 0.200286              | 0.235638              | 0.225352              | 7.211253          | main                           | 32        |
+| {'name': 'data_init_runtime', 'type': 'function'} | 4294640006   | 2.0            | regionprofile  | 0.021971       | 0.740707   | 0.000001            | 1.0               | 1.0               | 1.0               | 32.0                | 0.000019              | 0.000025              | 0.000022              | 0.000700          | data_init_runtime              | 32        |
+| {'name': 'data_perturbed_init_runtime', 'type': 'function'} | 4294640006   | 3.0            | regionprofile  | 0.021947       | 0.740007   | 0.000001            | 1.0               | 1.0               | 1.0               | 32.0                | 0.004903              | 0.007133              | 0.005629              | 0.180135          | data_perturbed_init_runtime    | 32        |
+| {'name': 'data_init_runtime', 'type': 'function'} | 4294640006   | 4.0            | regionprofile  | 0.016869       | 0.559873   | 0.000000            | 1.0               | 1.0               | 1.0               | 32.0                | 0.016869              | 0.018813              | 0.017496              | 0.559873          | data_init_runtime              | 32        |
+| {'name': 'comp', 'type': 'function'}           | 4294640006   | 5.0            | regionprofile  | 0.573497       | 18.910303  | 0.000027            | 6.0               | 6.0               | 6.0               | 192.0              | 0.000110              | 0.000207              | 0.000168              | 0.005382          | comp                           | 32        |
+
+#### Radix Sort Metadata
+```
+```
+#### Column Sort Metadata
+```
+```
+
+
+Delete the stuff below:
 
 Have the following code in your programs to collect metadata:
 ```
