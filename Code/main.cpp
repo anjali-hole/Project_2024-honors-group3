@@ -85,7 +85,6 @@ int main(int argc, char *argv[]) {
 
 
     // Call specified sorting algorithm
-    CALI_MARK_BEGIN("comp");
     if (algToRun == 0)
     {
         bitonic_sort(local_data, array_size, comm_size, rank);
@@ -109,11 +108,9 @@ int main(int argc, char *argv[]) {
     else
     {
         printf("\n Please provide a valid sorting algorithm");
-        CALI_MARK_END("comp");
         CALI_MARK_END("main");
         return 1;
     }
-    CALI_MARK_END("comp");
 
     // Check that data is sorted
     if (check_data_sorted(local_data, array_size, comm_size, rank))

@@ -225,7 +225,6 @@ void sample_sort(int*& local_data, size_t &local_data_size, int comm_size, int r
 
 // Helper function for merging two sorted arrays
 void merge(int* left, int left_size, int* right, int right_size, int* result) {
-    CALI_MARK_BEGIN("comp_small");
     int i = 0, j = 0, k = 0;
     while (i < left_size && j < right_size) {
         if (left[i] <= right[j]) {
@@ -240,7 +239,6 @@ void merge(int* left, int left_size, int* right, int right_size, int* result) {
     while (j < right_size) {
         result[k++] = right[j++];
     }
-    CALI_MARK_END("comp_small");
 }
 
 void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
@@ -254,9 +252,11 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
     */
 
     //sort local data
+    CALI_MARK_BEGIN("comp");
     CALI_MARK_BEGIN("comp_large");
     sequential_sort(local_data, local_data_size);
     CALI_MARK_END("comp_large");
+    CALI_MARK_END("comp");
 
 
     //testing
@@ -298,8 +298,11 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
 
            //merge
             std::vector<int> merged(local_data_size + partner_size);   
+            CALI_MARK_BEGIN("comp");
+            CALI_MARK_BEGIN("comp_small");
             merge(local_data, local_data_size, received_data.data(), partner_size, merged.data());
-               
+            CALI_MARK_END("comp_small");
+            CALI_MARK_END("comp");
 
 
             //keep correct half of the data
