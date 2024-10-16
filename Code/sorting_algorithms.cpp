@@ -246,12 +246,12 @@ void merge(int* left, int left_size, int* right, int right_size, int* result) {
 void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
 
     //testing
-    std::cout << "Rank " << rank << " initial data: ";
+    /*std::cout << "Rank " << rank << " initial data: ";
     for (size_t i = 0; i < local_data_size; ++i) {
         std::cout << local_data[i] << " ";
     }
     std::cout << std::endl; 
-
+    */
 
     //sort local data
     CALI_MARK_BEGIN("comp_large");
@@ -260,12 +260,12 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
 
 
     //testing
-    std::cout << "Rank " << rank << " after local sort: ";
+    /*std::cout << "Rank " << rank << " after local sort: ";
      for (size_t i = 0; i < local_data_size; ++i) {
             std::cout << local_data[i] << " ";
       }
       std::cout << std::endl;
-
+    */
     //parallel mergee
     for (int step = 1; step < comm_size; step *=2){
         int partner = rank ^ step;
@@ -288,13 +288,13 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
             CALI_MARK_END("comm_large");
             CALI_MARK_END("comm");
 
-//testing
-	    std::cout << "Rank " << rank << " received from " << partner << ": ";
+	    //testing
+	    /*std::cout << "Rank " << rank << " received from " << partner << ": ";
             for (size_t i = 0; i < partner_size; ++i) {
                 std::cout << received_data[i] << " ";
             }
             std::cout << std::endl;
- 
+ 	    */
 
            //merge
             std::vector<int> merged(local_data_size + partner_size);   
@@ -310,21 +310,16 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
             local_data_size = new_size;            
 
 
-	//testing
-	    std::cout << "Rank " << rank << " after merge with " << partner << ": ";
+  	    //testing
+	    /*std::cout << "Rank " << rank << " after merge with " << partner << ": ";
             for (size_t i = 0; i < local_data_size; ++i) {
                 std::cout << local_data[i] << " ";
             }
             std::cout << std::endl;
+	    */
         }
     }
-    //testing
-    std::cout << "Rank " << rank << " final data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl;
-
+   
 }
 
 #pragma endregion
