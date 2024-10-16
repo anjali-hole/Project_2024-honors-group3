@@ -45,13 +45,13 @@ void bitonic_merge(int* data1, int* data2, int* smaller_half, int* larger_half, 
     // by this point we are guaranteed to be filling larger_half, since we have completely gone through one of the input arrays
     while (index1 < length) {
         int output_index = index1 + index2;
-        larger_half[output_index] = data1[index1];
+        larger_half[output_index - length] = data1[index1];
         index1++;
     }
 
     while (index2 < length) {
         int output_index = index1 + index2;
-        larger_half[output_index] = data2[index2];
+        larger_half[output_index - length] = data2[index2];
         index2++;
     }
 }
@@ -84,15 +84,17 @@ void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int ra
                 if (is_increasing) {
                     std::memcpy(local_data, smaller_half, local_data_size * sizeof(int));
                     MPI_Send(larger_half, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
-                } else {
+                }
+                else {
                     std::memcpy(local_data, larger_half, local_data_size * sizeof(int));
                     MPI_Send(smaller_half, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
                 }
 
-                delete other_data;
-                delete smaller_half;
-                delete larger_half;
-            } else {
+                delete[] other_data;
+                delete[] smaller_half;
+                delete[] larger_half;
+            }
+            else {
                 MPI_Send(local_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
                 MPI_Recv(local_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             }
