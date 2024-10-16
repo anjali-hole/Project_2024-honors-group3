@@ -347,11 +347,11 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     delete[] send_buf;
 
     //testing
-    std::cout << "(Post Step 2)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post Step 2)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 3: sort "column"
     sequential_sort(local_data, local_data_size);
@@ -360,24 +360,54 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     MPI_Alltoall(MPI_IN_PLACE, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
 
     //testing
-    std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 5: sort column
     sequential_sort(local_data, local_data_size);
     //testing
-    std::cout << "(Post step 5)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post step 5)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 6: "shift"
     // we shift whats needed to the correct process, but not in the order recommended
     // 0->1, 1->2, 2->0
+        int shift_buf_size = (local_data_size / 2) * comm_size;
+        int* shift_buf = new int[shift_buf_size](0);
+
+        // Fill shift buf such that values that are sent to target proc are filled appropriately in their section, rest are 0
+        int start = ceil(local_data_size / 2);
+        int target_rank = rank + 1;
+        if (rank == comm_size - 1) {
+            target_rank = 0;
+        }
+        int offset = (local_data_size / 2) * target_rank;
+
+        for(int i = start, i < local_data_size; ++i) {
+            shift_buf[offset + (i - ceil(local_data_size / 2))] = local_data[i];
+        }
+
+        // Receive array of (local_data_size / 2) * comm_size, look for non-zero elements and place them at top of local_data
+        int* receive_buf = new int[shift_buf_size](0);
+        MPI_Alltoall(shift_buf, shift_buf_size, MPI_INT, receive_buf, shift_buf_size, MPI_INT, MPI_COMM_WORLD);
+        int receive_rank = rank - 1;
+        if (rank == 0) {
+            receive_rank = comm_size - 1;
+        }
+        offset = receive_rank * (local_data_size / 2);
+        for(int i = ceil(local_data_size); i < local_data_size; ++i) {
+            local_data[i] = receive_buf[offest + i - ceil(local_data_size / 2)];
+        }
+        std::cout << "(Post step 6) Rank " << rank << " data: ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << " ";
+            }
 
     // step 7: everyone except process 0 sequential sort
     if (rank != 0){
