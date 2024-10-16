@@ -321,13 +321,6 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     int s = comm_size;
     int r = local_data_size;
 
-    //testing
-    std::cout << "(Pre Step 1)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
-
     // step 1: sort column
     sequential_sort(local_data, local_data_size);
     //testing
@@ -366,20 +359,20 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     MPI_Alltoall(MPI_IN_PLACE, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
 
     //testing
-    std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 5: sort column
     sequential_sort(local_data, local_data_size);
     //testing
-    std::cout << "(Post step 5)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post step 5)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 6: "shift"
     // we shift whats needed to the correct process, but not in the order recommended
