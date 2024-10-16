@@ -379,18 +379,18 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     // we shift whats needed to the correct process, but not in the order recommended
     // 0->1, 1->2, 2->0
         int shift_buf_size = (local_data_size / 2) * comm_size;
-        int* shift_buf = new int[shift_buf_size](0);
+        int* shift_buf = new int[shift_buf_size]();
 
         // Fill shift buf such that values that are sent to target proc are filled appropriately in their section, rest are 0
-        int start = ceil(local_data_size / 2);
+        int start = std::ceil(local_data_size / 2);
         int target_rank = rank + 1;
         if (rank == comm_size - 1) {
             target_rank = 0;
         }
         int offset = (local_data_size / 2) * target_rank;
 
-        for(int i = start, i < local_data_size; ++i) {
-            shift_buf[offset + (i - ceil(local_data_size / 2))] = local_data[i];
+        for(int i = start; i < local_data_size; ++i) {
+            shift_buf[offset + (i - std::ceil(local_data_size / 2))] = local_data[i];
         }
 
         // Receive array of (local_data_size / 2) * comm_size, look for non-zero elements and place them at top of local_data
@@ -401,8 +401,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
             receive_rank = comm_size - 1;
         }
         offset = receive_rank * (local_data_size / 2);
-        for(int i = ceil(local_data_size); i < local_data_size; ++i) {
-            local_data[i] = receive_buf[offest + i - ceil(local_data_size / 2)];
+        for(int i = std::ceil(local_data_size); i < local_data_size; ++i) {
+            local_data[i] = receive_buf[offset + i - std::ceil(local_data_size / 2)];
         }
         std::cout << "(Post step 6) Rank " << rank << " data: ";
             for (size_t i = 0; i < local_data_size; ++i) {
