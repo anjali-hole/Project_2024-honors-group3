@@ -456,7 +456,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         if (rank == comm_size - 1) {
             receive_rank = 0; // except for last column, that receives from column0
         }
-        offset = receive_rank * shift_buf_size / comm_size; // offset in receive buf
+        offset = (local_data_size / 2) * target_rank;
+        // offset = receive_rank * shift_buf_size / comm_size; // offset in receive buf
         for(int i = 0; i < local_data_size; ++i) {
             local_data[half_local_size_ceil + i] = receive_buf[offset + i];
         }
@@ -467,7 +468,6 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
             std::cout << local_data[i] << " ";
         }
         std::cout << std::endl;
-
 
     delete[] shift_buf;
     delete[] receive_buf;
