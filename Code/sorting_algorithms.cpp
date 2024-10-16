@@ -420,15 +420,13 @@ void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
 
     // radix sort now that all data are in correct processes
     CALI_MARK_BEGIN("comp");
-    CALI_MARK_BEGIN("comp_large");
     int max_val = *std::max_element(local_data, local_data + total_recv);
     for (long int exp = 1; max_val / exp > 0; exp *= 10)
     {
-        CALI_MARK_BEGIN("comp_small");
+        CALI_MARK_BEGIN("comp_large");
         counting_sort(local_data, total_recv, exp);
-        CALI_MARK_END("comp_small");
+        CALI_MARK_END("comp_large");
     }
-    CALI_MARK_END("comp_large");
     CALI_MARK_END("comp");
 
     // print data
