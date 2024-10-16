@@ -470,6 +470,46 @@ MPI_Finalize()
 - Memory usage
   
 ### 3a. Caliper instrumentation
+#### Bitonic Sort Calltree
+```
+```
+#### Sample Sort Calltree
+```
+```
+#### Merge Sort Calltree
+```
+0.910 main
+├─ 0.023 data_init_runtime
+│  └─ 0.023 data_perturbed_init_runtime
+│     └─ 0.017 data_init_runtime
+├─ 0.591 comp
+│  ├─ 0.444 comp_large
+│  └─ 0.146 comp_small
+├─ 0.059 comm
+│  ├─ 0.013 comm_small
+│  │  └─ 0.013 MPI_Sendrecv
+│  └─ 0.046 comm_large
+│     └─ 0.046 MPI_Sendrecv
+└─ 0.011 correctness_check
+   └─ 0.001 comm
+      └─ 0.001 comm_small
+         ├─ 0.000 MPI_Recv
+         └─ 0.000 MPI_Send
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.003 MPI_Comm_dup
+
+```
+#### Radix Sort Calltree
+```
+```
+#### Column Sort Calltree
+```
+```
+
+
+Delete the stuff below:
 Please use the caliper build `/scratch/group/csce435-f24/Caliper/caliper/share/cmake/caliper` 
 (same as lab2 build.sh) to collect caliper files for each experiment you run.
 
