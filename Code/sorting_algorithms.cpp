@@ -397,7 +397,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
             shift_buf[offset + (i - ceiling(local_data_size, 2))] = local_data[i];
         }
 
-        std::cout << "Shift buf for Rank " << rank << " data: ";
+        std::cout << "Shift buf for Rank " << rank << " data: " << std::endl;
         for (size_t i = 0; i < shift_buf_size; ++i) {
             std::cout << shift_buf[i] << " ";
         }
@@ -409,7 +409,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         if (rank == 0) {
             receive_rank = comm_size - 1;
         }
-        std::cout << "Receive buf for Rank " << rank << " data: ";
+        std::cout << "Receive buf for Rank " << rank << " data: " << std::endl;
         for (size_t i = 0; i < shift_buf_size; ++i) {
             std::cout << receive_buf[i] << " ";
         }
@@ -417,7 +417,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         for(int i = ceiling(local_data_size, 2); i < local_data_size; ++i) {
             local_data[i] = receive_buf[offset + i - ceiling(local_data_size, 2)];
         }
-        std::cout << "(Post step 6) Rank " << rank << " data: ";
+        std::cout << "(Post step 6) Rank " << rank << " data: " << std::endl;
         for (size_t i = 0; i < local_data_size; ++i) {
             std::cout << local_data[i] << " ";
         }
