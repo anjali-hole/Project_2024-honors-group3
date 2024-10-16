@@ -115,7 +115,6 @@ int main(int argc, char *argv[]) {
     }
     CALI_MARK_END("comp");
 
-    CALI_MARK_BEGIN("correctness_check");
     // Check that data is sorted
     if (check_data_sorted(local_data, array_size, comm_size, rank))
     {
@@ -125,7 +124,6 @@ int main(int argc, char *argv[]) {
     {
         printf("\n Data is not sorted");
     }
-    CALI_MARK_END("correctness_check");
 
     delete[] local_data;
     

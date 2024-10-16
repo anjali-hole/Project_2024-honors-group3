@@ -9,10 +9,8 @@
 #include <iostream>
 #include <vector>
 
-void sequential_sort(int* local_data, size_t local_data_size) {
-    CALI_MARK_BEGIN("comp_small");
+inline void sequential_sort(int* local_data, size_t local_data_size) {
     std::sort(local_data, local_data + local_data_size);
-    CALI_MARK_END("comp_small");
 }
 
 #pragma region bitonic_sort
@@ -246,7 +244,6 @@ void merge(int* left, int left_size, int* right, int right_size, int* result) {
 }
 
 void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
-    CALI_MARK_BEGIN("comp_large");
 
     //testing
     std::cout << "Rank " << rank << " initial data: ";
@@ -256,8 +253,10 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
     std::cout << std::endl; 
 
 
-   //sort local data
+    //sort local data
+    CALI_MARK_BEGIN("comp_large");
     sequential_sort(local_data, local_data_size);
+    CALI_MARK_END("comp_large");
 
 
     //testing
@@ -325,8 +324,7 @@ void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank
         std::cout << local_data[i] << " ";
     }
     std::cout << std::endl;
- 
-   CALI_MARK_END("comp_large");
+
 }
 
 #pragma endregion
