@@ -404,7 +404,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         std::cout << std::endl;
         // Receive array of (local_data_size / 2) * comm_size, look for non-zero elements and place them at top of local_data
         int* receive_buf = new int[shift_buf_size]();
-        MPI_Alltoall(shift_buf, shift_buf_size, MPI_INT, receive_buf, shift_buf_size, MPI_INT, MPI_COMM_WORLD);
+        MPI_Alltoall(shift_buf, shift_buf_size / comm_size, MPI_INT, receive_buf, shift_buf_size / comm_size, MPI_INT, MPI_COMM_WORLD);
         int receive_rank = rank - 1;
         if (rank == 0) {
             receive_rank = comm_size - 1;
