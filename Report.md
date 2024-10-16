@@ -503,6 +503,26 @@ MPI_Finalize()
 ```
 #### Radix Sort Calltree
 ```
+1.321 main
+├─ 0.091 data_init_runtime
+│  └─ 0.091 data_init_runtime
+├─ 0.049 comm
+│  ├─ 0.008 comm_small
+│  │  └─ 0.008 MPI_Allreduce
+│  └─ 0.040 comm_large
+│     ├─ 0.003 MPI_Alltoall
+│     └─ 0.037 MPI_Alltoallv
+├─ 0.910 comp
+│  └─ 0.897 comp_large
+└─ 0.021 correctness_check
+   └─ 0.011 comm
+      └─ 0.011 comm_small
+         ├─ 0.011 MPI_Recv
+         └─ 0.000 MPI_Send
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.131 MPI_Comm_dup
 ```
 #### Column Sort Calltree
 ```
@@ -596,8 +616,9 @@ CALI_MARK_END("comp");
 | {'name': 'comp', 'type': 'function'}           | 4294640006   | 5.0            | regionprofile  | 0.573497       | 18.910303  | 0.000027            | 6.0               | 6.0               | 6.0               | 192.0              | 0.000110              | 0.000207              | 0.000168              | 0.005382          | comp                           | 32        |
 
 #### Radix Sort Metadata
-```
-```
+| profile         | cali.caliper.version | mpi.world.size | spot.metrics                             | spot.timeseries.metrics | spot.format.version | spot.options                                         | spot.channels | cali.channel | spot:node.order | spot:output      | spot:profile.mpi | spot:region.count | spot:time.exclusive | spot:time.variance | launchdate  | libraries                                                                                      | cmdline                        | cluster | algorithm | programming_model | data_type | size_of_data_type | input_size | input_type | num_procs | scalability | group_num | implementation_source |
+|-----------------|----------------------|----------------|------------------------------------------|-------------------------|---------------------|------------------------------------------------------|---------------|--------------|-----------------|-----------------|------------------|-------------------|--------------------|-------------------|-------------|------------------------------------------------------------------------------------------------|--------------------------------|---------|-----------|------------------|-----------|-------------------|------------|------------|-----------|-------------|-----------|-----------------------|
+| 2241276464      | 2.11.0               | 32             | min#inclusive#sum#time.duration,max#inclusive#... |                         | 2                   | time.variance,profile.mpi,node.order,region.co...     | regionprofile | spot         | true            | p32-a4194304.cali | true             | true              | true               | true              | 1729119981  | [/scratch/group/csce435-f24/Caliper/caliper/libcaliper.so]                                      | [./main, 3, 2, 4194304]        | c       | radix     | mpi              | int       | 4                 | 4194304    | Random     | 32        | strong      | 3         | handwritten           |
 #### Column Sort Metadata
 ```
 ```
