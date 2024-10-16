@@ -580,6 +580,34 @@ CALI_MARK_END("comp");
 ```
 
 ### 3b. Collect Metadata
+#### Bitonic Sort Calltree
+```
+```
+#### Sample Sort Calltree
+```
+```
+#### Merge Sort Metadata
+```
+
+| Name                         | NID       | Spot Channel | Min Time/Rank | Max Time/Rank | Avg Time/Rank | ... | Max Time/Rank (Exc) | Avg Time/Rank (Exc) | Total Time (Exc) | Num Procs |
+|------------------------------|-----------|--------------|---------------|---------------|---------------|-----|---------------------|---------------------|------------------|-----------|
+| main                        | 4294640006 | 1.0          | 0.906205      | 0.912302      | 0.909992      | ... | 0.235638            | 0.225352            | 7.211253         | 32        |
+| data_init_runtime           | 4294640006 | 2.0          | 0.021971      | 0.024824      | 0.023147      | ... | 0.000025            | 0.000022            | 0.000700         | 32        |
+| data_perturbed_init_runtime | 4294640006 | 3.0          | 0.021947      | 0.024798      | 0.023125      | ... | 0.007133            | 0.005629            | 0.180135         | 32        |
+| data_init_runtime           | 4294640006 | 4.0          | 0.016869      | 0.018813      | 0.017496      | ... | 0.018813            | 0.017496            | 0.559873         | 32        |
+| comp                        | 4294640006 | 5.0          | 0.573497      | 0.597503      | 0.590947      | ... | 0.000207            | 0.000168            | 0.005382         | 32        |
+
+
+```
+#### Radix Sort Calltree
+```
+```
+#### Column Sort Calltree
+```
+```
+
+
+Delete the stuff below:
 
 Have the following code in your programs to collect metadata:
 ```
