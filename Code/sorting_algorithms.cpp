@@ -450,7 +450,7 @@ void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
 #pragma region column_sort
 
 void column_sort(int*& local_data, size_t local_data_size, int comm_size, int rank) {
-    std::cout << "LOCLA DATS SIZE IS " << local_data_size << " and COMM SIZE IS " << comm_size << std::endl;
+    // std::cout << "LOCLA DATS SIZE IS " << local_data_size << " and COMM SIZE IS " << comm_size << std::endl;
     // local_data is the column
     CALI_MARK_BEGIN("whole_column_sort");
     int s = comm_size;
@@ -603,25 +603,25 @@ void column_sort(int*& local_data, size_t local_data_size, int comm_size, int ra
         }
 
         // testing
-        if (rank == 0) {
-            std::cout << "(Post step 8) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "-";
-            }
-            std::cout << std::endl;
-        } else if (rank == 1) {
-            std::cout << "(Post step 8) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "+";
-            }
-            std::cout << std::endl;
-        } else {
-            std::cout << "(Post step 8) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "_";
-            }
-            std::cout << std::endl;
-        }
+        // if (rank == 0) {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "-";
+        //     }
+        //     std::cout << std::endl;
+        // } else if (rank == 1) {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "+";
+        //     }
+        //     std::cout << std::endl;
+        // } else {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "_";
+        //     }
+        //     std::cout << std::endl;
+        // }
 
     delete[] shift_buf;
     delete[] receive_buf;
