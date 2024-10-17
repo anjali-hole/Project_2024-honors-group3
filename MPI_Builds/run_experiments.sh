@@ -7,10 +7,10 @@
 input_sizes=(32)
 
 # Array of input types
-# 0: Sorted, 1: 1% perturbed, 2: Random, 3: Reverse sorted
+# 0: Sorted, 1: 1% perturbed, 2: Random, 3: Reverse sorted, 4: Test data for column sort
 # TODO: Add 1 and 2 after those functions are implemented
 # input_types=(0 3)
-input_types=(2)
+input_types=(4)
 
 # Array of number of processors
 # num_procs=(2 4 8 16 32 64 128 256 512 1024)
