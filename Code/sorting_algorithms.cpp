@@ -457,19 +457,19 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     int r = local_data_size;
 
     //testing
-    std::cout << "(Pre Step 1)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Pre Step 1)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
     // step 1: sort column
     sequential_sort(local_data, local_data_size);
     //testing
-    std::cout << "(Post Step 1)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post Step 1)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 2: Transpose: access values in CMO and place them back into matrix in RMO
     int* send_buf = new int[local_data_size];
@@ -488,11 +488,11 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     delete[] send_buf;
 
     //testing
-    std::cout << "(Post Step 2)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post Step 2)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 3: sort "column"
     sequential_sort(local_data, local_data_size);
@@ -501,20 +501,20 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     MPI_Alltoall(MPI_IN_PLACE, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
 
     //testing
-    std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 5: sort column
     sequential_sort(local_data, local_data_size);
     //testing
-    std::cout << "(Post step 5)Rank " << rank << " initial data: ";
-    for (size_t i = 0; i < local_data_size; ++i) {
-        std::cout << local_data[i] << " ";
-    }
-    std::cout << std::endl; 
+    // std::cout << "(Post step 5)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
 
     // step 6: "shift"
     // we shift whats needed to the correct process, but not in the order recommended
@@ -549,16 +549,36 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         }
 
         // testing
-        std::cout << "(Post step 6) Rank " << rank << " data: ";
-        for (size_t i = 0; i < local_data_size; ++i) {
-            std::cout << local_data[i] << " ";
-        }
-        std::cout << std::endl;
+        // std::cout << "(Post step 6) Rank " << rank << " data: ";
+        // for (size_t i = 0; i < local_data_size; ++i) {
+        //     std::cout << local_data[i] << " ";
+        // }
+        // std::cout << std::endl;
 
     // step 7: everyone except process 0 sequential sort
     if (rank != 0){
         sequential_sort(local_data, local_data_size);
     }
+
+    if (rank == 0) {
+            std::cout << "(Post step 7) Rank " << rank << " data: ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << "-";
+            }
+            std::cout << std::endl;
+        } else if (rank == 1) {
+            std::cout << "(Post step 7) Rank " << rank << " data: ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << "+";
+            }
+            std::cout << std::endl;
+        } else {
+            std::cout << "(Post step 7) Rank " << rank << " data: ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << "_";
+            }
+            std::cout << std::endl;
+        }
 
     // step 8: "unshift"
     // shift back: 2->1, 1->0, 0->2
@@ -603,25 +623,25 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         }
 
         // testing
-        if (rank == 0) {
-            std::cout << "(Post step 8) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "-";
-            }
-            std::cout << std::endl;
-        } else if (rank == 1) {
-            std::cout << "(Post step 8) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "+";
-            }
-            std::cout << std::endl;
-        } else {
-            std::cout << "(Post step 8) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "_";
-            }
-            std::cout << std::endl;
-        }
+        // if (rank == 0) {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "-";
+        //     }
+        //     std::cout << std::endl;
+        // } else if (rank == 1) {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "+";
+        //     }
+        //     std::cout << std::endl;
+        // } else {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "_";
+        //     }
+        //     std::cout << std::endl;
+        // }
 
     delete[] shift_buf;
     delete[] receive_buf;
