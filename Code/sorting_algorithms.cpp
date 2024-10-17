@@ -587,8 +587,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
 
         if (rank != 0) { // no shifting needs to be done for first column
             int* temp = new int[local_data_size]();
-            for(int i = local_size / 2; i < local_data_size; ++i) {
-                temp[i - local_size / 2] = local_data[i];
+            for(int i = local_data_size / 2; i < local_data_size; ++i) {
+                temp[i - local_data_size / 2] = local_data[i];
             }
             delete[] local_data;
             local_data = temp;
