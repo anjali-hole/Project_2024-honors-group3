@@ -564,6 +564,23 @@ MPI_Finalize()
 ```
 #### Column Sort Calltree
 ```
+3.962 main
+├─ 0.017 data_init_runtime
+│  └─ 0.017 data_init_runtime
+├─ 2.367 comp
+│  └─ 2.367 comp_large
+├─ 0.716 comm
+│  └─ 0.716 comm_large
+│     └─ 0.716 MPI_Alltoall
+└─ 0.013 correctness_check
+   └─ 0.002 comm
+      └─ 0.002 comm_small
+         ├─ 0.002 MPI_Recv
+         └─ 0.000 MPI_Send
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.003 MPI_Comm_dup
 ```
 
 
