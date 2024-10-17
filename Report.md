@@ -354,74 +354,66 @@ MPI_Alltoallv()
 
 #### Column Sort
 ```
-// Function to extract a column from a 2D matrix
-function get_column_data(local_data, col_index):
-    // Initialize an empty list to store the column data
-    column_data = []
+Function column_sort(local_data, local_data_size, comm_size, rank)
+    Begin whole_column_sort
 
-    // Loop over each row in the local data
-    for row in local_data:
-        // Append the element at the column index to the column_data list
-        column_data.append(row[col_index])
+    // Step 1: Sort the local data
+    Call sequential_sort(local_data, local_data_size)
 
-    return column_data
+    // Step 2: Transpose the matrix
+    Initialize send_buf of size local_data_size
+    Calculate subbuf_size as local_data_size / comm_size
+    For i from 0 to local_data_size
+        Calculate target process as i % comm_size
+        Calculate target index as (subbuf_size * target process) + (i / comm_size)
+        Place local_data[i] into send_buf[target index]
+    Call MPI_Alltoall to redistribute send_buf into local_data using subbuf_size blocks
+    Delete send_buf
 
-function parallel_column_sort(local_data, num_rows, num_cols, comm_size, rank):
-    // Sort each column locally
-    for col = 0 to num_cols - 1:
-        local_column_data = get_column_data(local_data, col)
-        sorted_column_data = sequential_sort(local_column_data) // can use any efficient sequential search such as merge, bubble
-        update_column(local_data, col, sorted_column_data)
+    // Step 3: Sort the transposed data
+    Call sequential_sort(local_data, local_data_size)
 
-    // Transpose the matrix
-    local_data = transpose_local(local_data)
+    // Step 4: "Untranspose" to restore original structure
+    Call MPI_Alltoall with MPI_IN_PLACE to transpose data back in-place using subbuf_size blocks
 
-    // Perform all-to-all communication to redistribute columns as rows
-    new_rows = MPI_Alltoallv(send_data=local_data, send_counts=calculate_send_counts(rank, comm_size),
-                             recv_data=new_matrix_space, recv_counts=calculate_recv_counts(rank, comm_size))
+    // Step 5: Sort the data again
+    Call sequential_sort(local_data, local_data_size)
 
-    // Sort all new rows received
-    for row = 0 to num_rows - 1:
-        sorted_row = sequential_sort(new_rows[row])
-        new_rows[row] = sorted_row
+    // Step 6: Shift data to right neighboring process
+    Initialize shift_buf of size (local_data_size / 2) * comm_size
+    Determine half_local_size_ceil as (local_data_size + 1) / 2
+    If rank == comm_size - 1
+        Set target_rank to 0
+    Else
+        Set target_rank to rank + 1
+    Calculate offset for filling shift_buf as (local_data_size / 2) * target_rank
+    For i from half_local_size_ceil to local_data_size
+        Place local_data[i] into shift_buf at offset + (i - half_local_size_ceil)
+    Initialize receive_buf of same size as shift_buf
+    Call MPI_Alltoall to exchange shift_buf into receive_buf using subbuf_size blocks
+    If rank == 0
+        Set receive_rank to comm_size - 1
+    Else
+        Set receive_rank to rank - 1
+    Calculate receive offset as receive_rank * (local_data_size / 2)
+    For i from half_local_size_ceil to local_data_size
+        Update local_data[i] from receive_buf at receive offset + (i - half_local_size_ceil)
+    Delete shift_buf and receive_buf
 
-    // Transpose the matrix back
-    local_data = transpose_local(new_rows)
+    // Step 7: Sort the data unless it's the first process
+    If rank != 0
+        Call sequential_sort(local_data, local_data_size)
 
-    // Another all-to-all communication to redistribute original rows
-    final_matrix = MPI_Alltoallv(send_data=local_data, send_counts=calculate_send_counts(rank, comm_size),
-                                 recv_data=final_matrix_space, recv_counts=calculate_recv_counts(rank, comm_size))
+    // Step 8: Reverse the shift done in step 6
+    Reinitialize shift_buf and receive_buf
+    Prepare data for reverse shift similar to step 6 but in opposite direction
+    Call MPI_Alltoall to exchange data for unshifting
+    Update local_data based on received data
+    Delete shift_buf and receive_buf
 
-    // Final local sort of each column again
-    for col = 0 to num_cols - 1:
-        local_column_data = get_column_data(final_matrix, col)
-        sorted_column_data = sequential_sort(local_column_data)
-        update_column(final_matrix, col, sorted_column_data)
+    End whole_column_sort
+End Function
 
-    return final_matrix
-
-function main():
-
-    // Initialize MPI
-    MPI_Init()
-    comm_size = MPI_Comm_size(MPI_COMM_WORLD)  // Get number of processes
-    rank = MPI_Comm_rank(MPI_COMM_WORLD)       // Get process rank
-
-    // Setup matrix dimensions and generate local data
-    num_rows, num_cols = determine_dimensions(comm_size)
-    local_data = read_or_generate_data(num_rows, num_cols, rank)
-
-    // Perform parallel column sort
-    sorted_matrix = parallel_column_sort(local_data, num_rows, num_cols, comm_size, rank)
-
-    // Gather all sorted matrices at root process
-    if rank == 0:
-        global_sorted_matrix = MPI_Gather(sorted_matrix, root=0)
-    else:
-        MPI_Gather(sorted_matrix, root=0)
-
-    // Finalize MPI
-    MPI_Finalize()
 ```
 
 ##### MPI calls to be used
