@@ -26,12 +26,18 @@ void generate_sorted(int* local_data, size_t local_data_size, int comm_size, int
 void generate_test_column(int* local_data, size_t local_data_size, int comm_size, int rank) {
     CALI_MARK_BEGIN("data_init_runtime");
     // Calculate the global start index for this rank
-    int matrix[32] = {
-        14, 27, 8, 16, 1, 12, 25, 6, 9,   // First column
-        10, 30, 21, 5, 24, 11, 4, 17, 18, // Second column
-        22, 32, 19, 7, 2, 31, 15, 26, 13, // Third column
-        23, 28, 20, 3, 29                 // Fourth column
+    int matrix[27] = {
+        14, 3, 21, 24, 8, 26, 19, 10, 2,   // First column
+        25, 1, 12, 23, 13, 4, 17, 15, 20,  // Second column
+        9, 27, 7, 16, 18, 5, 22, 11, 6     // Third column
     };
+
+    // int matrix[32] = {
+    //     14, 27, 8, 16, 1, 12, 25, 6, 9,   // First column
+    //     10, 30, 21, 5, 24, 11, 4, 17, 18, // Second column
+    //     22, 32, 19, 7, 2, 31, 15, 26, 13, // Third column
+    //     23, 28, 20, 3, 29                 // Fourth column
+    // };
 
     size_t global_start = rank * local_data_size;
     
