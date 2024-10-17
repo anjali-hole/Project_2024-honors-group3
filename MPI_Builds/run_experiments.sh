@@ -4,7 +4,7 @@
 # TODO: Uncomment the line below for actual sizes
 # input_sizes=(65536 262144 1048576 4194304 16777216 67108864 268435456)
 # input_sizes=(8 16 32 64 128 256 512)
-input_sizes=(27)
+input_sizes=(9)
 
 # Array of input types
 # 0: Sorted, 1: 1% perturbed, 2: Random, 3: Reverse sorted, 4: Test data for column sort
