@@ -73,6 +73,8 @@ int main(int argc, char *argv[]) {
     else if (data_generation == 3)
     {
         generate_reverse_sorted(local_data, array_size, comm_size, rank);
+    } else if (data_generation == 4) {
+        generate_test_column(local_data, array_size, comm_size, rank);
     }
     else
     {

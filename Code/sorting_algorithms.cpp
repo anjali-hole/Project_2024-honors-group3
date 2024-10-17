@@ -449,8 +449,184 @@ void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
 
 #pragma region column_sort
 
-void column_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+void column_sort(int*& local_data, size_t local_data_size, int comm_size, int rank) {
+    // std::cout << "LOCLA DATS SIZE IS " << local_data_size << " and COMM SIZE IS " << comm_size << std::endl;
+    // local_data is the column
+    CALI_MARK_BEGIN("whole_column_sort");
+    int s = comm_size;
+    int r = local_data_size;
+
+    //testing
+    // std::cout << "(Pre Step 1)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
+    // step 1: sort column
+    sequential_sort(local_data, local_data_size);
+    //testing
+    // std::cout << "(Post Step 1)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
+
+    // step 2: Transpose: access values in CMO and place them back into matrix in RMO
+    int* send_buf = new int[local_data_size];
+    int subbuf_size = local_data_size / comm_size;
+    for(int i = 0; i < local_data_size; ++i) {
+        int process = i % comm_size;
+        // std::cout << "Rank " << rank << " inserting " << i << " into " << (subbuf_size * process) + (i / comm_size) << std::endl;
+        send_buf[(subbuf_size * process) + (i / comm_size)] = local_data[i];
+    }
+    // std::cout << "send_buf for rank " << rank << ":"; 
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << send_buf[i] << " ";
+    // }
+    // std::cout << std::endl;
+    MPI_Alltoall(send_buf, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
+    delete[] send_buf;
+
+    //testing
+    // std::cout << "(Post Step 2)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
+
+    // step 3: sort "column"
+    sequential_sort(local_data, local_data_size);
+
+    // step 4: "untranspose"
+    MPI_Alltoall(MPI_IN_PLACE, subbuf_size, MPI_INT, local_data, subbuf_size, MPI_INT, MPI_COMM_WORLD);
+
+    //testing
+    // std::cout << "(Post Step 4)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
+
+    // step 5: sort column
+    sequential_sort(local_data, local_data_size);
+    //testing
+    // std::cout << "(Post step 5)Rank " << rank << " initial data: ";
+    // for (size_t i = 0; i < local_data_size; ++i) {
+    //     std::cout << local_data[i] << " ";
+    // }
+    // std::cout << std::endl; 
+
+    // step 6: "shift"
+    // we shift whats needed to the correct process, but not in the order recommended
+    // 0->1, 1->2, 2->0
+        int shift_buf_size = (local_data_size / 2) * comm_size;
+        int* shift_buf = new int[shift_buf_size]();
+
+        // Fill shift buf such that values that are sent to target proc are filled appropriately in their section, rest are 0
+        int half_local_size_ceil = (local_data_size + 1) / 2;
+        int start = half_local_size_ceil;
+        int target_rank = rank + 1;
+        if (rank == comm_size - 1) {
+            target_rank = 0;
+        }
+        int offset = (local_data_size / 2) * target_rank;
+
+        for(int i = start; i < local_data_size; ++i) {
+            shift_buf[offset + (i - half_local_size_ceil)] = local_data[i];
+        }
+
+        // Receive array of (local_data_size / 2) * comm_size, get appropriate elements by offset place them at top of local_data
+        int* receive_buf = new int[shift_buf_size]();
+        MPI_Alltoall(shift_buf, shift_buf_size / comm_size, MPI_INT, receive_buf, shift_buf_size / comm_size, MPI_INT, MPI_COMM_WORLD);
+        int receive_rank = rank - 1;
+        if (rank == 0) {
+            receive_rank = comm_size - 1;
+        }
+        std::cout << std::endl;
+        offset = receive_rank * (local_data_size / 2);
+        for(int i = half_local_size_ceil; i < local_data_size; ++i) {
+            local_data[i] = receive_buf[offset + i - half_local_size_ceil];
+        }
+
+        // testing
+        // std::cout << "(Post step 6) Rank " << rank << " data: ";
+        // for (size_t i = 0; i < local_data_size; ++i) {
+        //     std::cout << local_data[i] << " ";
+        // }
+        // std::cout << std::endl;
+
+    // step 7: everyone except process 0 sequential sort
+    if (rank != 0){
+        sequential_sort(local_data, local_data_size);
+    }
+
+    // step 8: "unshift"
+    // shift back: 2->1, 1->0, 0->2
+        delete[] shift_buf;
+        delete[] receive_buf;
+        shift_buf = new int[shift_buf_size]();
+        receive_buf = new int[shift_buf_size]();
+
+        if (rank != 0) {
+            // for non-first columns, select first half of elements to move to prev column
+            target_rank = rank - 1;
+            offset = (local_data_size / 2) * target_rank;
+            for(int i = 0; i < local_data_size / 2; ++i) {
+                shift_buf[offset + i] = local_data[i];
+            }
+        } else {
+            // for last column, select second half of elements to move to last column
+            target_rank = comm_size - 1;
+            offset = (local_data_size / 2) * target_rank;
+            for(int i = half_local_size_ceil; i < local_data_size; ++i) {
+                shift_buf[offset + (i - half_local_size_ceil)] = local_data[i];
+            }
+        }
+
+        MPI_Alltoall(shift_buf, shift_buf_size / comm_size, MPI_INT, receive_buf, shift_buf_size / comm_size, MPI_INT, MPI_COMM_WORLD);
+
+        if (rank != 0) { // no shifting needs to be done for first column
+            int* temp = new int[local_data_size]();
+            for(int i = local_data_size / 2; i < local_data_size; ++i) {
+                temp[i - local_data_size / 2] = local_data[i];
+            }
+            delete[] local_data;
+            local_data = temp;
+        }
+        receive_rank = rank + 1; // receiving from next column
+        if (rank == comm_size - 1) {
+            receive_rank = 0; // except for last column, that receives from column0
+        }
+        offset = receive_rank * shift_buf_size / comm_size; // offset in receive buf
+        for(int i = 0; i < local_data_size; ++i) {
+            local_data[half_local_size_ceil + i] = receive_buf[offset + i];
+        }
+
+        // testing
+        // if (rank == 0) {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "-";
+        //     }
+        //     std::cout << std::endl;
+        // } else if (rank == 1) {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "+";
+        //     }
+        //     std::cout << std::endl;
+        // } else {
+        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
+        //     for (size_t i = 0; i < local_data_size; ++i) {
+        //         std::cout << local_data[i] << "_";
+        //     }
+        //     std::cout << std::endl;
+        // }
+
+    delete[] shift_buf;
+    delete[] receive_buf;
     
+    CALI_MARK_END("whole_column_sort");
 }
 
 #pragma endregion

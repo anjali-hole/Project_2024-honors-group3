@@ -89,17 +89,17 @@ function merge(data1, data2):
         if (output_index < array_size):
             lower_half[output_index] = value
         else:
-            upper_half[output_index] = value
+            upper_half[output_index - array_size] = value
         
     // by this point we are guaranteed to be filling upper_half, since we have completely gone through one of the input arrays
     while (index1 < array_size):
         output_index = index1 + index2
-        upper_half[ouput_index] = data1[index1]
+        upper_half[ouput_index - array_size] = data1[index1]
         index1++
     
     while (index2 < array_size):
         output_index = index1 + index2
-        upper_half[ouput_index] = data2[index2]
+        upper_half[ouput_index - array_size] = data2[index2]
         index2++
 
     return (lower_half, upper_half)
