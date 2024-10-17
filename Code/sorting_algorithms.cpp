@@ -560,26 +560,6 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         sequential_sort(local_data, local_data_size);
     }
 
-    if (rank == 0) {
-            std::cout << "(Post step 7) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "-";
-            }
-            std::cout << std::endl;
-        } else if (rank == 1) {
-            std::cout << "(Post step 7) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "+";
-            }
-            std::cout << std::endl;
-        } else {
-            std::cout << "(Post step 7) Rank " << rank << " data: ";
-            for (size_t i = 0; i < local_data_size; ++i) {
-                std::cout << local_data[i] << "_";
-            }
-            std::cout << std::endl;
-        }
-
     // step 8: "unshift"
     // shift back: 2->1, 1->0, 0->2
         delete[] shift_buf;
@@ -607,8 +587,8 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
 
         if (rank != 0) { // no shifting needs to be done for first column
             int* temp = new int[local_data_size]();
-            for(int i = local_data_size / 2; i < local_data_size; ++i) {
-                temp[i - local_data_size / 2] = local_data[i];
+            for(int i = half_local_size_ceil; i < local_data_size; ++i) {
+                temp[i - half_local_size_ceil] = local_data[i];
             }
             delete[] local_data;
             local_data = temp;
@@ -622,26 +602,26 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
             local_data[half_local_size_ceil + i] = receive_buf[offset + i];
         }
 
-        // testing
-        // if (rank == 0) {
-        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
-        //     for (size_t i = 0; i < local_data_size; ++i) {
-        //         std::cout << local_data[i] << "-";
-        //     }
-        //     std::cout << std::endl;
-        // } else if (rank == 1) {
-        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
-        //     for (size_t i = 0; i < local_data_size; ++i) {
-        //         std::cout << local_data[i] << "+";
-        //     }
-        //     std::cout << std::endl;
-        // } else {
-        //     std::cout << "(Post step 8) Rank " << rank << " data: ";
-        //     for (size_t i = 0; i < local_data_size; ++i) {
-        //         std::cout << local_data[i] << "_";
-        //     }
-        //     std::cout << std::endl;
-        // }
+        testing
+        if (rank == 0) {
+            std::cout << "(Post step 8) Rank " << rank << " data: ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << "-";
+            }
+            std::cout << std::endl;
+        } else if (rank == 1) {
+            std::cout << "(Post step 8) Rank " << rank << " data: ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << "+";
+            }
+            std::cout << std::endl;
+        } else {
+            std::cout << "(Post step 8) Rank " << rank << " data: ";
+            for (size_t i = 0; i < local_data_size; ++i) {
+                std::cout << local_data[i] << "_";
+            }
+            std::cout << std::endl;
+        }
 
     delete[] shift_buf;
     delete[] receive_buf;
