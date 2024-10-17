@@ -472,6 +472,21 @@ MPI_Finalize()
 ### 3a. Caliper instrumentation
 #### Bitonic Sort Calltree
 ```
+0.002 main
+├─ 0.000 data_init_runtime
+│  └─ 0.000 data_perturbed_init_runtime
+│     └─ 0.000 data_init_runtime
+├─ 0.001 MPI_Recv
+├─ 0.000 MPI_Send
+└─ 0.000 correctness_check
+   └─ 0.000 comm
+      └─ 0.000 comm_small
+         ├─ 0.000 MPI_Recv
+         └─ 0.000 MPI_Send
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.000 MPI_Comm_dup
 ```
 #### Sample Sort Calltree
 ```
