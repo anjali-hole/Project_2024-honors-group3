@@ -455,6 +455,12 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
     int s = comm_size;
     int r = local_data_size;
 
+    //testing
+    std::cout << "(Pre Step 1)Rank " << rank << " initial data: ";
+    for (size_t i = 0; i < local_data_size; ++i) {
+        std::cout << local_data[i] << " ";
+    }
+    std::cout << std::endl; 
     // step 1: sort column
     sequential_sort(local_data, local_data_size);
     //testing
