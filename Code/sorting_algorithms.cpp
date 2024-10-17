@@ -602,7 +602,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
             local_data[half_local_size_ceil + i] = receive_buf[offset + i];
         }
 
-        testing
+        // testing
         if (rank == 0) {
             std::cout << "(Post step 8) Rank " << rank << " data: ";
             for (size_t i = 0; i < local_data_size; ++i) {
