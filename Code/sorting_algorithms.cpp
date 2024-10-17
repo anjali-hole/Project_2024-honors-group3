@@ -450,7 +450,7 @@ void radix_sort(int*& local_data, size_t &local_size, int comm_size, int rank) {
 #pragma region column_sort
 
 void column_sort(int*& local_data, size_t local_data_size, int comm_size, int rank) {
-    std::cout << "LOCLA DATS SIZE IS " << local_data_size << " and COMM SIZE IS " << comm_size << std::endl;
+    // std::cout << "LOCLA DATS SIZE IS " << local_data_size << " and COMM SIZE IS " << comm_size << std::endl;
     // local_data is the column
 
     int s = comm_size;
