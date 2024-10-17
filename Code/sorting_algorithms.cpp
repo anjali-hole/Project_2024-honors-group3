@@ -565,7 +565,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         delete[] shift_buf;
         delete[] receive_buf;
         shift_buf = new int[shift_buf_size]();
-        shift_buf = new int[shift_buf_size]();
+        receive_buf = new int[shift_buf_size]();
 
         if (rank != 0) {
             // for non-first columns, select first half of elements to move to prev column
