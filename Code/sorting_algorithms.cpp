@@ -599,7 +599,7 @@ void column_sort(int* local_data, size_t local_data_size, int comm_size, int ran
         }
         offset = receive_rank * shift_buf_size / comm_size; // offset in receive buf
         for(int i = 0; i < local_data_size; ++i) {
-            local_data[(local_data_size / 2) + i] = receive_buf[offset + i];
+            local_data[half_local_size_ceil + i] = receive_buf[offset + i];
         }
 
         // testing
