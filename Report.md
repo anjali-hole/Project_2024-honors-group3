@@ -508,27 +508,27 @@ MPI_Finalize()
 ```
 #### Merge Sort Calltree
 ```
-0.910 main
-├─ 0.023 data_init_runtime
-│  └─ 0.023 data_perturbed_init_runtime
-│     └─ 0.017 data_init_runtime
-├─ 0.591 comp
-│  ├─ 0.444 comp_large
-│  └─ 0.146 comp_small
-├─ 0.059 comm
-│  ├─ 0.013 comm_small
-│  │  └─ 0.013 MPI_Sendrecv
-│  └─ 0.046 comm_large
-│     └─ 0.046 MPI_Sendrecv
-└─ 0.011 correctness_check
+1.761 main
+├─ 0.091 data_init_runtime
+│  └─ 0.091 data_init_runtime
+├─ 1.345 comp
+│  ├─ 1.201 comp_large
+│  └─ 0.145 comp_small
+├─ 0.093 comm
+│  ├─ 0.070 comm_small
+│  │  └─ 0.070 MPI_Sendrecv
+│  └─ 0.022 comm_large
+│     ├─ 0.000 MPI_Sendrecv
+│     └─ 0.022 MPI_Gather
+└─ 0.012 correctness_check
    └─ 0.001 comm
       └─ 0.001 comm_small
-         ├─ 0.000 MPI_Recv
+         ├─ 0.001 MPI_Recv
          └─ 0.000 MPI_Send
 0.000 MPI_Finalize
 0.000 MPI_Initialized
 0.000 MPI_Finalized
-0.003 MPI_Comm_dup
+0.323 MPI_Comm_dup
 
 ```
 #### Radix Sort Calltree
@@ -644,35 +644,34 @@ MPI_Finalize()
 #### Merge Sort Metadata
 
 | **Metadata Key**            | **Value**  |
-|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **cali.caliper.version**    | 2.11.0   |
-| **mpi.world.size**          | 32    |
-| **spot.metrics**            | min#inclusive#sum#time.duration, max#inclusive#sum#time.duration, avg#inclusive#sum#time.duration, sum#inclusive#sum#time.duration, variance#inclusive#sum#time.duration, min#min#aggregate.slot, min#sum#rc.count, avg#sum#rc.count, max#sum#rc.count, sum#sum#rc.count, min#scale#sum#time.duration.ns, max#scale#sum#time.duration.ns, avg#scale#sum#time.duration.ns, sum#scale#sum#time.duration.ns |
-| **spot.timeseries.metrics** | time.variance, profile.mpi, node.order, region.count, time.exclusive|
-| **spot.format.version**     | 2  |
-| **spot.options**            | regionprofile|
-| **spot.channels**           | spot|
-| **cali.channel**            | true |
-| **spot:node.order**         | p32-a4194304.cali |
-| **spot:output**             | true |
-| **spot:profile.mpi**        | true |
-| **spot:region.count**       | true|
-| **spot:time.exclusive**     | true|
-| **spot:time.variance**      | true|
-| **launchdate**              | 1729116474|
-| **libraries**               | /scratch/group/csce435-f24/Caliper/caliper/lib64/libcaliper.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/libmpicxx.so.12, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/release/libmpi.so.12, /lib64/librt.so.1, /lib64/libpthread.so.0, /lib64/libdl.so.2, /sw/eb/sw/GCCcore/8.3.0/lib64/libstdc++.so.6, /lib64/libm.so.6, /sw/eb/sw/GCCcore/8.3.0/lib64/libgcc_s.so.1, /lib64/libc.so.6, /sw/eb/sw/CUDA/12.4.0/extras/CUPTI/lib64/libcupti.so.12, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpapi.so.6.0, /lib64/ld-linux-x86-64.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/libfabric.so.1, /lib64/libutil.so.1, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpfm.so.4, /lib64/libnuma.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libshm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libmlx-fi.so, /lib64/libucp.so.0, /sw/eb/sw/zlib/1.2.11-GCCcore-8.3.0/lib/libz.so.1, /usr/lib64/libuct.so.0, /usr/lib64/libucs.so.0, /usr/lib64/libucm.so.0, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libverbs-fi.so, /lib64/librdmacm.so.1, /lib64/libibverbs.so.1, /lib64/libnl-3.so.200, /lib64/libnl-route-3.so.200, /usr/lib64/libibverbs/libmlx5-rdmav34.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libpsmx2-fi.so, /lib64/libpsm2.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libsockets-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/librxm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libtcp-fi.so, /usr/lib64/ucx/libuct_ib.so.0, /usr/lib64/ucx/libuct_rdmacm.so.0, /usr/lib64/ucx/libuct_cma.so.0, /usr/lib64/ucx/libuct_knem.so.0, /usr/lib64/ucx/libuct_xpmem.so.0, /usr/lib64/libxpmem.so.0 |
-| **cmdline**                 | ./main, 2, 1, 4194304  |
-| **cluster**                 | c |
-| **algorithm**               | merge |
-| **programming_model**       | mpi |
-| **data_type**               | int |
-| **size_of_data_type**       | 4 |
-| **input_size**              | 4194304 |
-| **input_type**              | 1_perc_perturbed |
-| **num_procs**               | 32|
-| **scalability**             | strong|
-| **group_num**               | 3  |
-| **implementation_source**   | handwritten |
+|------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| cali.caliper.version        | 2.11.0|
+| mpi.world.size              | 32|
+| spot.metrics                 | min#inclusive#sum#time.duration,max#inclusive#sum#time.duration,avg#inclusive#sum#time.duration,sum#inclusive#sum#time.duration,variance#inclusive#sum#time.duration,min#min#aggregate.slot,min#sum#rc.count,avg#sum#rc.count,max#sum#rc.count,sum#sum#rc.count,min#scale#sum#time.duration.ns,max#scale#sum#time.duration.ns,avg#scale#sum#time.duration.ns,sum#scale#sum#time.duration.ns|
+| spot.timeseries.metrics      | 2|
+| spot.format.version          | time.variance,profile.mpi,node.order,region.count,time.exclusive|
+| spot.options                 | regionprofile|
+| spot.channels                | spot|
+| cali.channel                 | true|
+| spot:node.order              | p32-a4194304.cali|
+| spot:output                  | true|
+| spot:profile.mpi             | true|
+| spot:region.count            | true|
+| spot:time.exclusive          | 1729408207|
+| spot:time.variance           | [/scratch/group/csce435-f24/Caliper/caliper/lib64/libcaliper.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/libmpicxx.so.12, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/release/libmpi.so.12, /lib64/librt.so.1, /lib64/libpthread.so.0, /lib64/libdl.so.2, /sw/eb/sw/GCCcore/8.3.0/lib64/libstdc++.so.6, /lib64/libm.so.6, /sw/eb/sw/GCCcore/8.3.0/lib64/libgcc_s.so.1, /lib64/libc.so.6, /sw/eb/sw/CUDA/11.8.0/extras/CUPTI/lib64/libcupti.so.11.8, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpapi.so.6, /lib64/ld-linux-x86-64.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/libfabric.so.1, /lib64/libutil.so.1, /sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpfm.so.4, /lib64/libnuma.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libshm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libmlx-fi.so, /lib64/libucp.so.0, /sw/eb/sw/zlib/1.2.11-GCCcore-8.3.0/lib/libz.so.1, /usr/lib64/libuct.so.0, /usr/lib64/libucs.so.0, /usr/lib64/libucm.so.0, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libverbs-fi.so, /lib64/librdmacm.so.1, /lib64/libibverbs.so.1, /lib64/libnl-3.so.200, /lib64/libnl-route-3.so.200, /usr/lib64/libibverbs/libmlx5-rdmav34.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libpsmx2-fi.so, /lib64/libpsm2.so.2, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libsockets-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/librxm-fi.so, /sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libtcp-fi.so, /usr/lib64/ucx/libuct_ib.so.0, /usr/lib64/ucx/libuct_rdmacm.so.0, /usr/lib64/ucx/libuct_cma.so.0, /usr/lib64/ucx/libuct_knem.so.0, /usr/lib64/ucx/libuct_xpmem.so.0, /usr/lib64/libxpmem.so.0] |
+| launchdate                  | [./main, 2, 2, 4194304]|
+| libraries                    | c|
+| cmdline                      | merge|
+| cluster                      | mpi|
+| algorithm                    | int|
+| programming_model            | 4 |
+| data_type                    | 4194304 |
+| size_of_data_type           | Random|
+| input_size                   | 32|
+| input_type                   | strong|
+| num_procs                   | 3|
+| scalability                  | handwritten |
+
 
 #### Radix Sort Metadata
 | Metadata Key                | Value |
