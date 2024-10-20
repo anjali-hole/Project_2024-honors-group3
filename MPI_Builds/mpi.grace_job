@@ -27,4 +27,4 @@ module load PAPI/6.0.0
 
 CALI_CONFIG="spot(output=p${processes}-a${array_size}.cali, \
     time.variance,profile.mpi)" \
-mpirun -np $processes ./main 2 3 $array_size
+mpirun -np $processes ./main 2 2 $array_size
