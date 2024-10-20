@@ -244,45 +244,45 @@ void merge(int* left, int left_size, int* right, int right_size, int* result) {
 
 
 void merge_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+    //sort local
     CALI_MARK_BEGIN("comp");
     CALI_MARK_BEGIN("comp_large");
     sequential_sort(local_data, local_data_size);
     CALI_MARK_END("comp_large");
     CALI_MARK_END("comp");
 
+    //parallel part
     for (int step = 1; step <= std::log2(comm_size); ++step) {
         int partner = rank ^ (1 << (step - 1)); // Find the partner process
 
         if (partner < comm_size) {
+            //send local
             CALI_MARK_BEGIN("comm");
             CALI_MARK_BEGIN("comm_small");
-            MPI_Sendrecv(local_data, local_data_size, MPI_INT, partner, 0,
-                         local_data, local_data_size, MPI_INT, partner, 0,
-                         MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-	    CALI_MARK_END("comm_small");
+            MPI_Sendrecv(local_data, local_data_size, MPI_INT, partner, 0, local_data, local_data_size, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	        CALI_MARK_END("comm_small");
             CALI_MARK_END("comm");
 
-
+            //buffer for received
             int partner_size;
-            
-	    CALI_MARK_BEGIN("comm");
+	        CALI_MARK_BEGIN("comm");
             CALI_MARK_BEGIN("comm_large");
-            MPI_Sendrecv(&local_data_size, 1, MPI_INT, partner, 1,
-                         &partner_size, 1, MPI_INT, partner, 1,
-                         MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Sendrecv(&local_data_size, 1, MPI_INT, partner, 1, &partner_size, 1, MPI_INT, partner, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             CALI_MARK_END("comm_large");
             CALI_MARK_END("comm");
 
-	    std::vector<int> received_data(partner_size);
+	        std::vector<int> received_data(partner_size);
 
             std::vector<int> merged(local_data_size + partner_size);
 
-	    CALI_MARK_BEGIN("comp");
+            //merge
+	        CALI_MARK_BEGIN("comp");
             CALI_MARK_BEGIN("comp_small"); 
             merge(local_data, local_data_size, received_data.data(), partner_size, merged.data());
-	    CALI_MARK_END("comp_small");
+	        CALI_MARK_END("comp_small");
             CALI_MARK_END("comp");
 
+            //update local
             if (rank < partner) {
                 local_data_size = merged.size() / 2;
                 std::copy(merged.begin(), merged.begin() + local_data_size, local_data);
