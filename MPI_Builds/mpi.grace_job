@@ -5,7 +5,7 @@
 #
 ##NECESSARY JOB SPECIFICATIONS
 #SBATCH --job-name=Column-65536-Sorted-<32-procs      #Set the job name to "JobName"
-#SBATCH --time=00:45:00           #Set the wall clock limit
+#SBATCH --time=01:45:00           #Set the wall clock limit
 #SBATCH --nodes=1               #Request nodes
 #SBATCH --ntasks-per-node=48    # Request tasks/cores per node
 #SBATCH --mem=128G                 #Request GB per node 
