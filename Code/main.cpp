@@ -11,6 +11,7 @@ int main(int argc, char *argv[]) {
     cali::ConfigManager mgr;
     mgr.start();
 
+    CALI_MARK_BEGIN("main");
     // Read arguments
     int algToRun; // 0 is bitonic, 1 is sample, 2 is merge, 3 is radix, 4 is column
     int data_generation; // 0 is sorted, 1 is 1% perturbed, 2 is random, 3 is reverse sorted
@@ -24,6 +25,7 @@ int main(int argc, char *argv[]) {
     else
     {
         printf("\n Please an algorithm to run, data generation method, and array size");
+        CALI_MARK_END("main");
         return 1;
     }
 
@@ -78,6 +80,7 @@ int main(int argc, char *argv[]) {
     {
         printf("\n Please provide a valid data generation method");
         CALI_MARK_END("data_init_runtime");
+        CALI_MARK_END("main");
         return 1;
     }
     CALI_MARK_END("data_init_runtime");
@@ -138,6 +141,7 @@ int main(int argc, char *argv[]) {
 
     delete[] local_data;
     
+    CALI_MARK_END("main");
     mgr.stop();
     mgr.flush();
     
