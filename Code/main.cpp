@@ -107,6 +107,10 @@ int main(int argc, char *argv[]) {
     {
         column_sort(local_data, array_size, comm_size, rank);
     }
+    else if (algToRun == 5)
+    {
+        continue;
+    }
     else
     {
         printf("\n Please provide a valid sorting algorithm");
