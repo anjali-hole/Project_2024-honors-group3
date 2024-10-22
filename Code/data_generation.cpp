@@ -131,21 +131,17 @@ bool check_data_sorted(int* local_data, size_t local_data_size, int comm_size, i
 
     // If not the first process send the smallest number down
     if (rank != 0) {
-        CALI_MARK_BEGIN("comm");
-        CALI_MARK_BEGIN("comm_small");
+
 	    MPI_Send(&local_data[0], 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD);  
-        CALI_MARK_END("comm_small");
-        CALI_MARK_END("comm");    
+   
     }
 
     // If not the last process make sure the number received is larger than the largest number in the local data
     if (rank != comm_size - 1) {
         int receivedNum;
-        CALI_MARK_BEGIN("comm");
-        CALI_MARK_BEGIN("comm_small");
+
         MPI_Recv(&receivedNum, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        CALI_MARK_END("comm_small");
-        CALI_MARK_END("comm");
+
         if (local_data[local_data_size - 1] > receivedNum) {
             std::cout << "Gap failed " << local_data[local_data_size - 1] << " > " << receivedNum <<std::endl;
             CALI_MARK_END("correctness_check");
