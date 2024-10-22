@@ -508,28 +508,25 @@ MPI_Finalize()
 ```
 #### Merge Sort Calltree
 ```
-1.761 main
-├─ 0.091 data_init_runtime
-│  └─ 0.091 data_init_runtime
-├─ 1.345 comp
-│  ├─ 1.201 comp_large
-│  └─ 0.145 comp_small
-├─ 0.093 comm
-│  ├─ 0.070 comm_small
-│  │  └─ 0.070 MPI_Sendrecv
-│  └─ 0.022 comm_large
-│     ├─ 0.000 MPI_Sendrecv
-│     └─ 0.022 MPI_Gather
-└─ 0.012 correctness_check
-   └─ 0.001 comm
-      └─ 0.001 comm_small
-         ├─ 0.001 MPI_Recv
-         └─ 0.000 MPI_Send
+0.009 main
+├─ 0.000 data_init_runtime
+│  └─ 0.000 data_init_runtime
+├─ 0.000 comp
+│  ├─ 0.000 comp_large
+│  └─ 0.000 comp_small
+├─ 0.007 comm
+│  ├─ 0.006 comm_small
+│  │  └─ 0.006 MPI_Sendrecv
+│  └─ 0.001 comm_large
+│     ├─ 0.001 MPI_Sendrecv
+│     └─ 0.000 MPI_Gather
+└─ 0.001 correctness_check
+   ├─ 0.001 MPI_Recv
+   └─ 0.000 MPI_Send
 0.000 MPI_Finalize
 0.000 MPI_Initialized
 0.000 MPI_Finalized
-0.323 MPI_Comm_dup
-
+0.001 MPI_Comm_dup
 ```
 #### Radix Sort Calltree
 ```
