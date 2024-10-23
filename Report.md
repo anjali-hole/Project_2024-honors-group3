@@ -739,6 +739,34 @@ MPI_Finalize()
 
 ### Bitonic Sort
 
+#### Full Program
+<img src="Graphs/bitonic_sort/weak_scale/main_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/main_perturbed.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/main_random.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/main_reversed.png" width="700">
+
+As the input size per process increases, the time required to sort the arrays increases. You can see this in the chart by looking at how the colored points line up vertically when you look at just once process number. Also, as the number of processes increases (and the total problem size along with it) the time required to sort the arrays also increases. This means the problem is not embarassingly parallel (i.e. it scales perfectly, so a flat line). The total time does not seem to increase dramatically, however, so the algorithm is fairly scalable.
+
+Note how the graphs look mostly identical. This is because bitonic sort does the same number of comparisons regardless of how the input data is sorted, so it makes sense that the time would be about the same for all four input types.
+
+The lack of data points was caused by two things: issues with MPI communication and Hydra, and issues with gathering all the data into the first process. The first issue is with Grace, and is outside of our control. For large number of processes, the MPI communication system Hydra keeps giving error messages. As for the second issue, at the moment after the sort has occured all of the data is gathered into the central process. This is for merge sort, though in order to get it to work properly with Caliper the section of code needed to be included for all algorithms. This meant for large input sizes and large process counts the array didn't fit into memory. For the final report we are working to only use this section of code for merge sort, since there is no need to gather all of the data onto one process for bitonic sort.
+
+#### Computation
+<img src="Graphs/bitonic_sort/weak_scale/comp_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/comp_perturbed.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/comp_random.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/comp_reversed.png" width="700">
+
+Unfortunately, when all of the trials were run the function was not properly annotated with the correct Caliper regions, so these graphs show as blank. We will fix the code, rerun all of the trials, and regenerate the graphs before the final report submission. These graphs should look similar to main.
+
+#### Communication
+<img src="Graphs/bitonic_sort/weak_scale/comm_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/comm_perturbed.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/comm_random.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scale/comm_reversed.png" width="700">
+
+Much like with the main graphs, as the problem size increases the total time to sort the arrays also increases, and as the number of processes increases the total time to sort the arrays increases. Just like with the main graphs, the type of input doesn't affect how long it takes to sort the arrays.
+
 ### Sample Sort
 
 #### Full Program
