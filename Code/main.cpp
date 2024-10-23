@@ -114,20 +114,23 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int* global_sorted_data = nullptr;
-    if (rank == 0) {
-        global_sorted_data = new int[array_size * comm_size];
-    }    
-    
-    CALI_MARK_BEGIN("comm");
-    CALI_MARK_BEGIN("comm_large");
-    MPI_Gather(local_data, array_size, MPI_INT, global_sorted_data, array_size, MPI_INT, 0, MPI_COMM_WORLD);
-    CALI_MARK_END("comm_large");
-    CALI_MARK_END("comm");
+    //gather only for mergesort
+    if (algToRun == 2) {
+        int* global_sorted_data = nullptr;
+	if (rank == 0) {
+            global_sorted_data = new int[array_size * comm_size];
+    	}	
 
-    if (rank == 0) {
-        delete[] global_sorted_data; // Free allocated memory
-    }
+    	CALI_MARK_BEGIN("comm");
+    	CALI_MARK_BEGIN("comm_large");
+    	MPI_Gather(local_data, array_size, MPI_INT, global_sorted_data, array_size, MPI_INT, 0, MPI_COMM_WORLD);
+    	CALI_MARK_END("comm_large");
+    	CALI_MARK_END("comm");
+
+    	if (rank == 0) {
+           delete[] global_sorted_data; // Free allocated memory
+    	}	
+    }	
 
     // Check that data is sorted
     if (check_data_sorted(local_data, array_size, comm_size, rank))
