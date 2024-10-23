@@ -829,9 +829,13 @@ Computation time doesn't really change with the number of processes--it remains 
 
 ### Column Sort
 
+In the development of the column sort algorithm for our project, we have successfully implemented and tested the initial eight steps as outlined in the referenced academic paper, utilizing an example with 27 elements across 3 processors (Below is a graph for this). This configuration demonstrated flawless performance, affirming the theoretical efficiency of the steps in optimizing both space complexity and the utilization of parallel processing architecture. The pseudocode provided has been meticulously updated to enhance clarity and detail concerning the operational mechanics of the algorithm, complemented by diagrams in Harsh's report that illustrate these processes.
 
-Include detailed analysis of computation performance, communication performance. 
-Include figures and explanation of your analysis.
+<img src="Graphs/column_sort/27_elements.jpg" width="700">
+
+During our implementation, we utilized the Caliper profiling tool to accurately time MPI calls, confirming the algorithm's performance efficiency during these stages. However, despite the successful execution of steps 1 through 7, we encountered an unexplained segmentation fault after step 7. This fault may be attributed to the stringent and specific requirements necessary for the proper function of column sort. Notably, the algorithm demands that the number of rows be at least double the square of one less than the number of columns (rows ≥ 2*(columns - 1)²), a condition which might not have been met under our test parameters.
+
+To address and resolve this segmentation fault, our testing plan will systematically explore different combinations of input sizes and processor counts, ensuring they align with the algorithm's constraints. This approach will help determine the optimal configurations that prevent runtime errors and maximize efficiency. By methodically varying these parameters and observing the outcomes, we aim to pinpoint the precise conditions under which the algorithm fails and subsequently refine our implementation to ensure robust performance across a broader range of scenarios. This comprehensive testing strategy is essential to validate the algorithm's functionality and reliability in diverse operational environments.
 
 ### 4a. Vary the following parameters
 For input_size's:
