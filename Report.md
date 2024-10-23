@@ -772,6 +772,16 @@ It is also directly proportional to the input size, since each new element of da
 
 ### Merge Sort
 
+#### Communication
+<img src="Graphs/merge_sort/comm_sorted.jpg" width="700">
+<img src="Graphs/merge_sort/comm_perturbed.jpg" width="700">
+<img src="Graphs/merge_sort/comm_random.jpg" width="700">
+<img src="Graphs/merge_sort/comm_reverse.jpg" width="700">
+
+Communication time is proportional to the number of processes as expected. It is also notable that the growth in cimmuncation time corresponds with the input sizes as well, with greater growth for larger input sizes. 
+
+Note: The number of runs at this stage are limited due to errors in job submissions.
+
 
 ### Radix Sort
 !["comm_large"](Graphs/radix_sort/comm_large_avg.jpg "comm_large")
