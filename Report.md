@@ -812,13 +812,20 @@ Note: The number of runs at this stage are limited due to errors in job submissi
 
 
 ### Radix Sort
+A few things to mention before any analysis are that none of my 1024 process runs were able to successfully complete due to network issues with hydra within Grace itself. Furthermore, `MPI_Alltoall` is known to not scale very well due to the amount of memory and general overhead that comes with sending messages from all processes to all processes. This issue is especially apparent with high process counts and large input size. For this reason, I was not able to get outputs for 2^22 elements with 512+ processes, 2^24 elements with 128+ processes, 2^26 with 32+, and 2^28 with 8+ processes. Some proof of this is shown in the `comm_large` plot below, where graphs for all input types show that communication time scales up very quickly with input size and number of processes.
+
+#### Communication
 !["comm_large"](Graphs/radix_sort/comm_large_avg.jpg "comm_large")
 This is a graph of the average time for the `comm_large` caliper section. Since the only time communication occurs in radix sort is to send all data from all processes to all processes using `MPI_Alltoall` or `MPI_Alltoallv`, there is no `comm_small` section.
 
+Communication time has a roughly linear relationship with the number of processes, regardless of input size and type. The magnitude of this relationship increases with input size, with larger inputs taking much longer to communicate than smaller ones. This makes sense as the algorithm uses `MPI_Alltoall` for communication, which is largely dependent on the number of processes performing the communication. There is not much difference between input types, which also makes sense because regardless of the data distribution the algorithm has to communicate its elements to all others.
+
+#### Computation
 !["comp_large"](Graphs/radix_sort/comp_large_avg.jpg "comp_large")
 This is a graph of the average time for the `comp_large` caliper section. There is no `comp_small` caliper section since radix sort always sorts the entire local array, never just a portion of it.
 
-A few things to mention before any analysis are that none of my 1024 process runs were able to successfully complete due to network issues with hydra within Grace itself. Furthermore, `MPI_Alltoall` is known to not scale very well due to the amount of memory and general overhead that comes with sending messages from all processes to all processes. This issue is especially apparent with high process counts and large input size. For this reason, I was not able to get outputs for 2^22 elements with 512+ processes, 2^24 elements with 128+ processes, 2^26 with 32+, and 2^28 with 8+ processes. Some proof of this is shown in the `comm_large` plot, where graphs for all input types show that communication time scales up very quickly with input size and number of processes.
+Computation time doesn't really change with the number of processes--it remains a horizontal line across the number of processes for any given input size and type. Since this is weak scaling, each process is always sorting roughly the same amount of data, and since radix sort is not a comparison based sorting algorithm, it takes the same amount of time to sort every type of input. As expected, average computation time does increase with the input size because each process has more elements to sort.
+
 
 ### Column Sort
 
