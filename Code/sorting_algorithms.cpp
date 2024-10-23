@@ -56,7 +56,11 @@ void bitonic_merge(int* data1, int* data2, int* smaller_half, int* larger_half, 
 
 // Assumes the total list size is a power of 2, and that comm_size is a power or 2 less than or equal to the list size, and that local_data size times comm_size is the total list size
 void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int rank) {
+    CALI_MARK_BEGIN("comp");
+    CALI_MARK_BEGIN("comp_large");
     sequential_sort(local_data, local_data_size);
+    CALI_MARK_END("comp_large");
+    CALI_MARK_END("comp");
 
     for (int level = 0; level < std::log2(comm_size); level++) {
         std::bitset<32> rank_bitset(rank);
@@ -75,10 +79,20 @@ void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int ra
                 int* smaller_half = new int[local_data_size];
                 int* larger_half = new int[local_data_size];
 
+                CALI_MARK_BEGIN("comm");
+                CALI_MARK_BEGIN("comm_large");
                 MPI_Recv(other_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                CALI_MARK_END("comm_large");
+                CALI_MARK_END("comm");
 
+                CALI_MARK_BEGIN("comp");
+                CALI_MARK_BEGIN("comp_small");
                 bitonic_merge(local_data, other_data, smaller_half, larger_half, local_data_size);
+                CALI_MARK_END("comp_small");
+                CALI_MARK_END("comp");
 
+                CALI_MARK_BEGIN("comm");
+                CALI_MARK_BEGIN("comm_large");
                 if (is_increasing) {
                     std::memcpy(local_data, smaller_half, local_data_size * sizeof(int));
                     MPI_Send(larger_half, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
@@ -87,14 +101,20 @@ void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int ra
                     std::memcpy(local_data, larger_half, local_data_size * sizeof(int));
                     MPI_Send(smaller_half, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
                 }
+                CALI_MARK_END("comm_large");
+                CALI_MARK_END("comm");
 
                 delete[] other_data;
                 delete[] smaller_half;
                 delete[] larger_half;
             }
             else {
+                CALI_MARK_BEGIN("comm");
+                CALI_MARK_BEGIN("comm_large");
                 MPI_Send(local_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD);
                 MPI_Recv(local_data, local_data_size, MPI_INT, other_rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                CALI_MARK_END("comm_large");
+                CALI_MARK_END("comm");
             }
         }
     }
