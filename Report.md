@@ -806,10 +806,10 @@ It is also directly proportional to the input size, since each new element of da
 <img src="Graphs/merge_sort/comm_random.jpg" width="700">
 <img src="Graphs/merge_sort/comm_reverse.jpg" width="700">
 
-Communication time is proportional to the number of processes as expected. It is also notable that the growth in cimmuncation time corresponds with the input sizes as well, with greater growth for larger input sizes. 
+Communication time is proportional to the number of processes as expected. It is also notable that the growth in communcation time corresponds with the input sizes as well, with greater growth for larger input sizes. 
 
-Note: The number of runs at this stage are limited due to errors in job submissions.
-
+Note: The number of runs at this stage are limited due to errors in job submissions.There are runs for higher num_procs, but they aren't included in the report because not all the runs for the given number of processes are there.
+Larger number of processes do seem to be consuming more memory and time, likely do to MPI_Gather() being utilized.
 
 ### Radix Sort
 A few things to mention before any analysis are that none of my 1024 process runs were able to successfully complete due to network issues with hydra within Grace itself. Furthermore, `MPI_Alltoall` is known to not scale very well due to the amount of memory and general overhead that comes with sending messages from all processes to all processes. This issue is especially apparent with high process counts and large input size. For this reason, I was not able to get outputs for 2^22 elements with 512+ processes, 2^24 elements with 128+ processes, 2^26 with 32+, and 2^28 with 8+ processes. Some proof of this is shown in the `comm_large` plot below, where graphs for all input types show that communication time scales up very quickly with input size and number of processes.
