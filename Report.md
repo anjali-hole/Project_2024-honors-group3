@@ -737,6 +737,54 @@ MPI_Finalize()
 
 ## 4. Performance evaluation
 
+### Bitonic Sort
+
+### Sample Sort
+
+#### Full Program
+<img src="Graphs/sample_sort/weak_scale/main_sorted.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/main_perturbed.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/main_random.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/main_reversed.png" width="700">
+
+Overall, relative to the number of processors, the communication portion is the faster growing portion of the workload, so it is the portion most reflected in the main graphs. The computation portion is more significant for a lower processor count, but comparing magnitudes with the similar comm data points, it is smaller for processor amounts above about 128 processors. Because the communication time is independent of the data type, there are not many notable differences on the main graphs other than certain outliers. The random data takes significantly longer than the other three strategies, which is discussed below.
+
+#### Computation
+<img src="Graphs/sample_sort/weak_scale/comp_sorted.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/comp_perturbed.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/comp_random.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/comp_reversed.png" width="700">
+
+Computation time is roughly proportional to the log of the number of processors, with the random data showing the most consistent trend. There are occasional spikes in the time taken across all of the input sizes, and this is most likely because of a poor choice of splitters. If the window between two of the splitters is too wide, then one process has to sort much more data than it should, which pushes the average of sorting times up.\
+The time taken appears to be directly proportional to the input size; however, based on the time complexity of sequential sorting, it is actually proportional to nlogn, but the graph is not on a large enough scale to show this. \
+The type of data used does make a significant difference in the computation portion, and mostly applies a scale factor to the performance. Sorted and reverse sorted take about the same amount of time, with 1% perturbed taking an additional 50% time, and random taking anout 3x as long. The reason for the large spike in random is likely due to the increased randomness in choosing the correct splitter. The sampling strategy used is taking 3 samples from each process, so with sorted and reverse sorted, there is guaranteed to be exactly one splitter within each intitial array, and this will usually hold true for the 1% perturbed, while there is likely a more unbalanced workload for the random data leading to certain processes taking much longer.\
+The sorted and reverse sorted values do have large spikes at 32 and 1024 processors for 2^28 and 2^26 elements respectively. This is where the total number of elements exceeds the 32 bit integer limit, which then allows for more randomness in the splitter distribution since there will be two splitters within that range of data that decide where it goes.
+
+#### Communication
+<img src="Graphs/sample_sort/weak_scale/comm_sorted.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/comm_perturbed.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/comm_random.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/comm_reversed.png" width="700">
+
+The time spent communicating is linearly proportional to the number of processes, which is expected since each additional processor must communicate with all existing processors a constant amount of times.\
+It is also directly proportional to the input size, since each new element of data needs to be sent to its corresponding process.
+
+
+### Merge Sort
+
+
+### Radix Sort
+!["comm_large"](Graphs/radix_sort/comm_large_avg.jpg "comm_large")
+This is a graph of the average time for the `comm_large` caliper section. Since the only time communication occurs in radix sort is to send all data from all processes to all processes using `MPI_Alltoall` or `MPI_Alltoallv`, there is no `comm_small` section.
+
+!["comp_large"](Graphs/radix_sort/comp_large_avg.jpg "comp_large")
+This is a graph of the average time for the `comp_large` caliper section. There is no `comp_small` caliper section since radix sort always sorts the entire local array, never just a portion of it.
+
+A few things to mention before any analysis are that none of my 1024 process runs were able to successfully complete due to network issues with hydra within Grace itself. Furthermore, `MPI_Alltoall` is known to not scale very well due to the amount of memory and general overhead that comes with sending messages from all processes to all processes. This issue is especially apparent with high process counts and large input size. For this reason, I was not able to get outputs for 2^22 elements with 512+ processes, 2^24 elements with 128+ processes, 2^26 with 32+, and 2^28 with 8+ processes. Some proof of this is shown in the `comm_large` plot, where graphs for all input types show that communication time scales up very quickly with input size and number of processes.
+
+### Column Sort
+
+
 Include detailed analysis of computation performance, communication performance. 
 Include figures and explanation of your analysis.
 
@@ -772,14 +820,6 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
     - Total time
     - Variance time/rank
 
-#### Radix Sort
-!["comm_large"](Graphs/radix_sort/comm_large_avg.jpg "comm_large")
-This is a graph of the average time for the `comm_large` caliper section. Since the only time communication occurs in radix sort is to send all data from all processes to all processes using `MPI_Alltoall` or `MPI_Alltoallv`, there is no `comm_small` section.
-
-!["comp_large"](Graphs/radix_sort/comp_large_avg.jpg "comp_large")
-This is a graph of the average time for the `comp_large` caliper section. There is no `comp_small` caliper section since radix sort always sorts the entire local array, never just a portion of it.
-
-A few things to mention before any analysis are that none of my 1024 process runs were able to successfully complete due to network issues with hydra within Grace itself. Furthermore, `MPI_Alltoall` is known to not scale very well due to the amount of memory and general overhead that comes with sending messages from all processes to all processes. This issue is especially apparent with high process counts and large input size. For this reason, I was not able to get outputs for 2^22 elements with 512+ processes, 2^24 elements with 128+ processes, 2^26 with 32+, and 2^28 with 8+ processes. Some proof of this is shown in the `comm_large` plot, where graphs for all input types show that communication time scales up very quickly with input size and number of processes.
 
 ## 5. Presentation
 Plots for the presentation should be as follows:
