@@ -86,9 +86,9 @@ void bitonic_sort(int* local_data, size_t local_data_size, int comm_size, int ra
                 CALI_MARK_END("comm");
 
                 CALI_MARK_BEGIN("comp");
-                CALI_MARK_BEGIN("comp_small");
+                CALI_MARK_BEGIN("comp_large");
                 bitonic_merge(local_data, other_data, smaller_half, larger_half, local_data_size);
-                CALI_MARK_END("comp_small");
+                CALI_MARK_END("comp_large");
                 CALI_MARK_END("comp");
 
                 CALI_MARK_BEGIN("comm");

@@ -15,12 +15,12 @@ int main(int argc, char *argv[]) {
     // Read arguments
     int algToRun; // 0 is bitonic, 1 is sample, 2 is merge, 3 is radix, 4 is column
     int data_generation; // 0 is sorted, 1 is 1% perturbed, 2 is random, 3 is reverse sorted
-    size_t array_size;
+    size_t input_size;
     if (argc == 4)
     {
         algToRun = atoi(argv[1]);
         data_generation = atoi(argv[2]);
-        array_size = atoi(argv[3]);
+        input_size = 2 << atoi(argv[3]);
     }
     else
     {
@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
     int comm_size, rank;
     MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    size_t array_size = input_size / comm_size;
     int* local_data = new int[array_size];
     
     // Add metadata collection
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
     adiak::value("programming_model", "mpi");
     adiak::value("data_type", "int");
     adiak::value("size_of_data_type", sizeof(int));
-    adiak::value("input_size", array_size);
+    adiak::value("input_size", input_size);
     adiak::value("input_type", data_gen_names[data_generation]);
     adiak::value("num_procs", comm_size);
     adiak::value("scalability", "strong"); // Adjust for weak scaling
@@ -112,21 +113,6 @@ int main(int argc, char *argv[]) {
         printf("\n Please provide a valid sorting algorithm");
         CALI_MARK_END("main");
         return 1;
-    }
-
-    int* global_sorted_data = nullptr;
-    if (rank == 0) {
-        global_sorted_data = new int[array_size * comm_size];
-    }    
-    
-    CALI_MARK_BEGIN("comm");
-    CALI_MARK_BEGIN("comm_large");
-    MPI_Gather(local_data, array_size, MPI_INT, global_sorted_data, array_size, MPI_INT, 0, MPI_COMM_WORLD);
-    CALI_MARK_END("comm_large");
-    CALI_MARK_END("comm");
-
-    if (rank == 0) {
-        delete[] global_sorted_data; // Free allocated memory
     }
 
     // Check that data is sorted
