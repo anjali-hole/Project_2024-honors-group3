@@ -19,7 +19,7 @@
 #
 data=$1
 array_size=$2
-processes=16
+processes=32
 data_gen=("sorted" "1-perturbed" "random" "reverse-sorted")
 
 module load intel/2020b       # load Intel software stack
