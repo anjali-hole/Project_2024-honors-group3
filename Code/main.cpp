@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     {
         algToRun = atoi(argv[1]);
         data_generation = atoi(argv[2]);
-        input_size = 2 << atoi(argv[3]);
+        input_size = 1 << atoi(argv[3]);
     }
     else
     {
