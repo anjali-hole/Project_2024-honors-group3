@@ -1,0 +1,254 @@
+__rec=node,id=12,attr=10,data=64,parent=3
+__rec=node,id=13,attr=8,data=attribute.alias,parent=12
+__rec=node,id=14,attr=8,data=attribute.unit,parent=12
+__rec=node,id=81,attr=14,data=sec,parent=5
+__rec=node,id=82,attr=13,data=Min time/rank,parent=81
+__rec=node,id=83,attr=10,data=65,parent=82
+__rec=node,id=84,attr=8,data=min#inclusive#sum#time.duration,parent=83
+__rec=node,id=85,attr=13,data=Max time/rank,parent=81
+__rec=node,id=86,attr=10,data=65,parent=85
+__rec=node,id=87,attr=8,data=max#inclusive#sum#time.duration,parent=86
+__rec=node,id=88,attr=13,data=Avg time/rank,parent=81
+__rec=node,id=89,attr=10,data=65,parent=88
+__rec=node,id=90,attr=8,data=avg#inclusive#sum#time.duration,parent=89
+__rec=node,id=93,attr=10,data=193,parent=5
+__rec=node,id=94,attr=8,data=avg.sum#inclusive#sum#time.duration,parent=93
+__rec=node,id=91,attr=10,data=193,parent=2
+__rec=node,id=92,attr=8,data=avg.count#inclusive#sum#time.duration,parent=91
+__rec=node,id=95,attr=13,data=Total time,parent=81
+__rec=node,id=96,attr=10,data=65,parent=95
+__rec=node,id=97,attr=8,data=sum#inclusive#sum#time.duration,parent=96
+__rec=node,id=98,attr=13,data=Min L1 misses/rank (exc),parent=5
+__rec=node,id=99,attr=10,data=65,parent=98
+__rec=node,id=100,attr=8,data=min#sum#sum#papi.PAPI_L1_DCM,parent=99
+__rec=node,id=101,attr=13,data=Max L1 misses/rank (exc),parent=5
+__rec=node,id=102,attr=10,data=65,parent=101
+__rec=node,id=103,attr=8,data=max#sum#sum#papi.PAPI_L1_DCM,parent=102
+__rec=node,id=104,attr=13,data=Avg L1 misses/rank (exc),parent=5
+__rec=node,id=105,attr=10,data=65,parent=104
+__rec=node,id=106,attr=8,data=avg#sum#sum#papi.PAPI_L1_DCM,parent=105
+__rec=node,id=108,attr=8,data=avg.sum#sum#sum#papi.PAPI_L1_DCM,parent=93
+__rec=node,id=107,attr=8,data=avg.count#sum#sum#papi.PAPI_L1_DCM,parent=91
+__rec=node,id=109,attr=13,data=Total L1 misses (exc),parent=5
+__rec=node,id=110,attr=10,data=65,parent=109
+__rec=node,id=111,attr=8,data=sum#sum#sum#papi.PAPI_L1_DCM,parent=110
+__rec=node,id=112,attr=13,data=Min L2 misses/rank (exc),parent=5
+__rec=node,id=113,attr=10,data=65,parent=112
+__rec=node,id=114,attr=8,data=min#sum#sum#papi.PAPI_L2_DCM,parent=113
+__rec=node,id=115,attr=13,data=Max L2 misses/rank (exc),parent=5
+__rec=node,id=116,attr=10,data=65,parent=115
+__rec=node,id=117,attr=8,data=max#sum#sum#papi.PAPI_L2_DCM,parent=116
+__rec=node,id=118,attr=13,data=Avg L2 misses/rank (exc),parent=5
+__rec=node,id=119,attr=10,data=65,parent=118
+__rec=node,id=120,attr=8,data=avg#sum#sum#papi.PAPI_L2_DCM,parent=119
+__rec=node,id=122,attr=8,data=avg.sum#sum#sum#papi.PAPI_L2_DCM,parent=93
+__rec=node,id=121,attr=8,data=avg.count#sum#sum#papi.PAPI_L2_DCM,parent=91
+__rec=node,id=123,attr=13,data=Total L2 misses (exc),parent=5
+__rec=node,id=124,attr=10,data=65,parent=123
+__rec=node,id=125,attr=8,data=sum#sum#sum#papi.PAPI_L2_DCM,parent=124
+__rec=node,id=126,attr=13,data=Min L1 misses/rank,parent=5
+__rec=node,id=127,attr=10,data=65,parent=126
+__rec=node,id=128,attr=8,data=min#inclusive#sum#papi.PAPI_L1_DCM,parent=127
+__rec=node,id=129,attr=13,data=Max L1 misses/rank,parent=5
+__rec=node,id=130,attr=10,data=65,parent=129
+__rec=node,id=131,attr=8,data=max#inclusive#sum#papi.PAPI_L1_DCM,parent=130
+__rec=node,id=132,attr=13,data=Avg L1 misses/rank,parent=5
+__rec=node,id=133,attr=10,data=65,parent=132
+__rec=node,id=134,attr=8,data=avg#inclusive#sum#papi.PAPI_L1_DCM,parent=133
+__rec=node,id=136,attr=8,data=avg.sum#inclusive#sum#papi.PAPI_L1_DCM,parent=93
+__rec=node,id=135,attr=8,data=avg.count#inclusive#sum#papi.PAPI_L1_DCM,parent=91
+__rec=node,id=137,attr=13,data=Total L1 misses,parent=5
+__rec=node,id=138,attr=10,data=65,parent=137
+__rec=node,id=139,attr=8,data=sum#inclusive#sum#papi.PAPI_L1_DCM,parent=138
+__rec=node,id=140,attr=13,data=Min L2 misses/rank,parent=5
+__rec=node,id=141,attr=10,data=65,parent=140
+__rec=node,id=142,attr=8,data=min#inclusive#sum#papi.PAPI_L2_DCM,parent=141
+__rec=node,id=143,attr=13,data=Max L2 misses/rank,parent=5
+__rec=node,id=144,attr=10,data=65,parent=143
+__rec=node,id=145,attr=8,data=max#inclusive#sum#papi.PAPI_L2_DCM,parent=144
+__rec=node,id=146,attr=13,data=Avg L2 misses/rank,parent=5
+__rec=node,id=147,attr=10,data=65,parent=146
+__rec=node,id=148,attr=8,data=avg#inclusive#sum#papi.PAPI_L2_DCM,parent=147
+__rec=node,id=150,attr=8,data=avg.sum#inclusive#sum#papi.PAPI_L2_DCM,parent=93
+__rec=node,id=149,attr=8,data=avg.count#inclusive#sum#papi.PAPI_L2_DCM,parent=91
+__rec=node,id=151,attr=13,data=Total L2 misses,parent=5
+__rec=node,id=152,attr=10,data=65,parent=151
+__rec=node,id=153,attr=8,data=sum#inclusive#sum#papi.PAPI_L2_DCM,parent=152
+__rec=node,id=154,attr=13,data=Variance time/rank,parent=5
+__rec=node,id=155,attr=10,data=65,parent=154
+__rec=node,id=156,attr=8,data=variance#inclusive#sum#time.duration,parent=155
+__rec=node,id=158,attr=8,data=var.sum#inclusive#sum#time.duration,parent=93
+__rec=node,id=159,attr=8,data=var.sqsum#inclusive#sum#time.duration,parent=93
+__rec=node,id=157,attr=8,data=var.count#inclusive#sum#time.duration,parent=91
+__rec=node,id=160,attr=13,data=Node order,parent=2
+__rec=node,id=161,attr=10,data=65,parent=160
+__rec=node,id=162,attr=8,data=min#min#aggregate.slot,parent=161
+__rec=node,id=178,attr=13,data=Min time/rank (exc),parent=81
+__rec=node,id=179,attr=10,data=65,parent=178
+__rec=node,id=180,attr=8,data=min#scale#sum#time.duration.ns,parent=179
+__rec=node,id=181,attr=13,data=Max time/rank (exc),parent=81
+__rec=node,id=182,attr=10,data=65,parent=181
+__rec=node,id=183,attr=8,data=max#scale#sum#time.duration.ns,parent=182
+__rec=node,id=184,attr=13,data=Avg time/rank (exc),parent=81
+__rec=node,id=185,attr=10,data=65,parent=184
+__rec=node,id=186,attr=8,data=avg#scale#sum#time.duration.ns,parent=185
+__rec=node,id=188,attr=8,data=avg.sum#scale#sum#time.duration.ns,parent=93
+__rec=node,id=187,attr=8,data=avg.count#scale#sum#time.duration.ns,parent=91
+__rec=node,id=189,attr=13,data=Total time (exc),parent=81
+__rec=node,id=190,attr=10,data=65,parent=189
+__rec=node,id=191,attr=8,data=sum#scale#sum#time.duration.ns,parent=190
+__rec=node,id=15,attr=8,data=spot.channel,parent=12
+__rec=node,id=193,attr=15,data=regionprofile
+__rec=ctx,ref=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=180=183=186=188=187=191,data=0.001349=0.001571=0.001500=0.024004=16=0.024004=4600.000000=4915.000000=4764.312500=76229.000000=16=76229.000000=1748.000000=1906.000000=1835.437500=29367.000000=16=29367.000000=4600.000000=4915.000000=4764.312500=76229.000000=16=76229.000000=1748.000000=1906.000000=1835.437500=29367.000000=16=29367.000000=0.000000=0.024004=0.000036=16=0=0.001349=0.001571=0.001500=0.024004=16=0.024004
+__rec=node,id=49,attr=10,data=276,parent=3
+__rec=node,id=50,attr=8,data=region,parent=49
+__rec=node,id=51,attr=50,data=main
+__rec=node,id=163,attr=14,data=count,parent=5
+__rec=node,id=164,attr=13,data=Calls/rank (min),parent=163
+__rec=node,id=165,attr=10,data=65,parent=164
+__rec=node,id=166,attr=8,data=min#sum#rc.count,parent=165
+__rec=node,id=167,attr=13,data=Calls/rank (avg),parent=163
+__rec=node,id=168,attr=10,data=65,parent=167
+__rec=node,id=169,attr=8,data=avg#sum#rc.count,parent=168
+__rec=node,id=171,attr=8,data=avg.sum#sum#rc.count,parent=93
+__rec=node,id=170,attr=8,data=avg.count#sum#rc.count,parent=91
+__rec=node,id=172,attr=13,data=Calls/rank (max),parent=163
+__rec=node,id=173,attr=10,data=65,parent=172
+__rec=node,id=174,attr=8,data=max#sum#rc.count,parent=173
+__rec=node,id=175,attr=13,data=Calls/rank (total),parent=163
+__rec=node,id=176,attr=10,data=65,parent=175
+__rec=node,id=177,attr=8,data=sum#sum#rc.count,parent=176
+__rec=ctx,ref=51=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=4.128441=4.514828=4.415975=70.655604=16=70.655604=8241019.000000=8392269.000000=8320658.500000=133130536.000000=16=133130536.000000=8202374.000000=8342868.000000=8278755.812500=132460093.000000=16=132460093.000000=56529381.000000=61939916.000000=60209267.875000=963348286.000000=16=963348286.000000=54166333.000000=59508194.000000=57831641.875000=925306270.000000=16=925306270.000000=0.027380=70.655604=312.451484=16=1=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.789096=0.795331=0.793236=12.691775=16=12.691775
+__rec=node,id=58,attr=50,data=data_init_runtime,parent=51
+__rec=ctx,ref=58=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.068446=0.073274=0.069194=1.107106=16=1.107106=676.000000=774.000000=716.125000=11458.000000=16=11458.000000=243.000000=313.000000=276.625000=4426.000000=16=4426.000000=1018097.000000=1050454.000000=1038325.000000=16613200.000000=16=16613200.000000=1012988.000000=1046389.000000=1033780.562500=16540489.000000=16=16540489.000000=0.000001=1.107106=0.076628=16=2=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000033=0.000057=0.000036=0.000580=16=0.000580
+__rec=node,id=59,attr=50,data=data_init_runtime,parent=58
+__rec=ctx,ref=59=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.068409=0.073218=0.069158=1.106526=16=1.106526=1017323.000000=1049739.000000=1037608.875000=16601742.000000=16=16601742.000000=1012728.000000=1046076.000000=1033503.937500=16536063.000000=16=16536063.000000=1017323.000000=1049739.000000=1037608.875000=16601742.000000=16=16601742.000000=1012728.000000=1046076.000000=1033503.937500=16536063.000000=16=16536063.000000=0.000001=1.106526=0.076548=16=3=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.068409=0.073218=0.069158=1.106526=16=1.106526
+__rec=node,id=60,attr=50,data=comm,parent=51
+__rec=ctx,ref=60=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.041218=0.065950=0.060472=0.967553=16=0.967553=971.000000=1075.000000=1011.562500=16185.000000=16=16185.000000=383.000000=443.000000=414.687500=6635.000000=16=6635.000000=3225948.000000=3237201.000000=3230102.062500=51681633.000000=16=51681633.000000=1068038.000000=1078384.000000=1070843.812500=17133501.000000=16=17133501.000000=0.000026=0.967553=0.058934=16=4=2.000000=2.000000=32.000000=16=2.000000=32.000000=0.000055=0.000067=0.000060=0.000954=16=0.000954
+__rec=node,id=61,attr=50,data=comm_small,parent=60
+__rec=ctx,ref=61=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.001021=0.021631=0.019781=0.316500=16=0.316500=884.000000=999.000000=958.875000=15342.000000=16=15342.000000=170.000000=345.000000=295.937500=4735.000000=16=4735.000000=5500.000000=12520.000000=8354.750000=133676.000000=16=133676.000000=2453.000000=9032.000000=4167.937500=66687.000000=16=66687.000000=0.000024=0.316500=0.006641=16=5=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000041=0.000058=0.000049=0.000791=16=0.000791
+__rec=node,id=62,attr=10,data=84,parent=6
+__rec=node,id=63,attr=8,data=subscription_event,parent=62
+__rec=node,id=64,attr=63,data=true,parent=3
+__rec=node,id=65,attr=10,data=276,parent=64
+__rec=node,id=66,attr=8,data=mpi.function,parent=65
+__rec=node,id=67,attr=66,data=MPI_Allreduce,parent=61
+__rec=ctx,ref=67=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000979=0.021573=0.019732=0.315709=16=0.315709=4616.000000=11541.000000=7395.875000=118334.000000=16=118334.000000=2283.000000=8713.000000=3872.000000=61952.000000=16=61952.000000=4616.000000=11541.000000=7395.875000=118334.000000=16=118334.000000=2283.000000=8713.000000=3872.000000=61952.000000=16=61952.000000=0.000024=0.315709=0.006609=16=6=2.000000=2.000000=32.000000=16=2.000000=32.000000=0.000979=0.021573=0.019732=0.315709=16=0.315709
+__rec=node,id=68,attr=50,data=comm_large,parent=60
+__rec=ctx,ref=68=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.038735=0.044618=0.040631=0.650099=16=0.650099=1116.000000=1287.000000=1177.875000=18846.000000=16=18846.000000=449.000000=702.000000=493.937500=7903.000000=16=7903.000000=3219263.000000=3223606.000000=3220735.750000=51531772.000000=16=51531772.000000=1064659.000000=1069403.000000=1066261.187500=17060179.000000=16=17060179.000000=0.000001=0.650099=0.026437=16=7=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000057=0.000081=0.000065=0.001032=16=0.001032
+__rec=node,id=69,attr=66,data=MPI_Alltoall,parent=68
+__rec=ctx,ref=69=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000097=0.005971=0.001909=0.030542=16=0.030542=1017.000000=1678.000000=1432.375000=22918.000000=16=22918.000000=509.000000=854.000000=618.062500=9889.000000=16=9889.000000=1017.000000=1678.000000=1432.375000=22918.000000=16=22918.000000=509.000000=854.000000=618.062500=9889.000000=16=9889.000000=0.000002=0.030542=0.000083=16=8=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000097=0.005971=0.001909=0.030542=16=0.030542
+__rec=node,id=70,attr=66,data=MPI_Alltoallv,parent=68
+__rec=ctx,ref=70=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.038357=0.038935=0.038658=0.618525=16=0.618525=3216772.000000=3221318.000000=3218125.500000=51490008.000000=16=51490008.000000=1063527.000000=1068317.000000=1065149.187500=17042387.000000=16=17042387.000000=3216772.000000=3221318.000000=3218125.500000=51490008.000000=16=51490008.000000=1063527.000000=1068317.000000=1065149.187500=17042387.000000=16=17042387.000000=0.000000=0.618525=0.023911=16=9=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.038357=0.038935=0.038658=0.618525=16=0.618525
+__rec=node,id=71,attr=50,data=comp,parent=51
+__rec=ctx,ref=71=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=3.160568=3.548465=3.425864=54.813831=16=54.813831=1052189.000000=1052759.000000=1052553.562500=16840857.000000=16=16840857.000000=1050836.000000=1051255.000000=1051067.625000=16817082.000000=16=16817082.000000=42963349.000000=48242854.000000=46568637.250000=745098196.000000=16=745098196.000000=42821544.000000=48030256.000000=46398039.125000=742368626.000000=16=742368626.000000=0.031597=54.813831=188.290300=16=10=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.061826=0.062215=0.062001=0.992010=16=0.992010
+__rec=node,id=72,attr=50,data=comp_large,parent=71
+__rec=ctx,ref=72=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=3.098571=3.486495=3.363864=53.821821=16=53.821821=41911057.000000=47190256.000000=45516083.687500=728257339.000000=16=728257339.000000=41770708.000000=46979213.000000=45346971.500000=725551544.000000=16=725551544.000000=41911057.000000=47190256.000000=45516083.687500=728257339.000000=16=728257339.000000=41770708.000000=46979213.000000=45346971.500000=725551544.000000=16=725551544.000000=0.031589=53.821821=181.554703=16=11=8.000000=8.687500=139.000000=16=9.000000=139.000000=3.098571=3.486495=3.363864=53.821821=16=53.821821
+__rec=node,id=73,attr=50,data=correctness_check,parent=51
+__rec=ctx,ref=73=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.041993=0.426327=0.067209=1.075338=16=1.075338=1049716.000000=1050297.000000=1050070.500000=16801128.000000=16=16801128.000000=1049571.000000=1049960.000000=1049703.937500=16795263.000000=16=16795263.000000=1050306.000000=1055862.000000=1051545.062500=16824721.000000=16=16824721.000000=1050003.000000=1051266.000000=1050222.562500=16803561.000000=16=16803561.000000=0.008601=1.075338=0.209882=16=12=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.041403=0.042320=0.042015=0.672238=16=0.672238
+__rec=node,id=74,attr=66,data=MPI_Recv,parent=73
+__rec=ctx,ref=74=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000040=0.383333=0.026713=0.400701=15=0.400701=560.000000=4877.000000=959.800000=14397.000000=15=14397.000000=102.000000=907.000000=201.466667=3022.000000=15=3022.000000=560.000000=4877.000000=959.800000=14397.000000=15=14397.000000=102.000000=907.000000=201.466667=3022.000000=15=3022.000000=0.009087=0.400701=0.147013=15=13=1.000000=1.000000=15.000000=15=1.000000=15.000000=0.000040=0.383333=0.026713=0.400701=15=0.400701
+__rec=node,id=75,attr=66,data=MPI_Finalize
+__rec=ctx,ref=75=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000012=0.000024=0.000014=0.000223=16=0.000223=263.000000=363.000000=296.437500=4743.000000=16=4743.000000=84.000000=99.000000=89.687500=1435.000000=16=1435.000000=263.000000=363.000000=296.437500=4743.000000=16=4743.000000=84.000000=99.000000=89.687500=1435.000000=16=1435.000000=0.000000=0.000223=0.000000=16=14=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000012=0.000024=0.000014=0.000223=16=0.000223
+__rec=node,id=76,attr=66,data=MPI_Initialized
+__rec=ctx,ref=76=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000009=0.000011=0.000010=0.000163=16=0.000163=331.000000=385.000000=353.187500=5651.000000=16=5651.000000=14.000000=29.000000=23.562500=377.000000=16=377.000000=331.000000=385.000000=353.187500=5651.000000=16=5651.000000=14.000000=29.000000=23.562500=377.000000=16=377.000000=0.000000=0.000163=0.000000=16=15=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000009=0.000011=0.000010=0.000163=16=0.000163
+__rec=node,id=77,attr=66,data=MPI_Finalized
+__rec=ctx,ref=77=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000008=0.000010=0.000009=0.000142=16=0.000142=266.000000=301.000000=282.812500=4525.000000=16=4525.000000=4.000000=24.000000=11.000000=176.000000=16=176.000000=266.000000=301.000000=282.812500=4525.000000=16=4525.000000=4.000000=24.000000=11.000000=176.000000=16=176.000000=0.000000=0.000142=0.000000=16=16=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000008=0.000010=0.000009=0.000142=16=0.000142
+__rec=node,id=78,attr=66,data=MPI_Comm_dup
+__rec=ctx,ref=78=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000561=0.387005=0.098363=1.573805=16=1.573805=4347.000000=8762.000000=5476.625000=87626.000000=16=87626.000000=1730.000000=2800.000000=2057.937500=32927.000000=16=32927.000000=4347.000000=8762.000000=5476.625000=87626.000000=16=87626.000000=1730.000000=2800.000000=2057.937500=32927.000000=16=32927.000000=0.027579=1.573805=0.596061=16=17=1.000000=1.000000=16.000000=16=1.000000=16.000000=0.000561=0.387005=0.098363=1.573805=16=1.573805
+__rec=node,id=192,attr=66,data=MPI_Send,parent=73
+__rec=ctx,ref=192=193,attr=84=87=90=94=92=97=100=103=106=108=107=111=114=117=120=122=121=125=128=131=134=136=135=139=142=145=148=150=149=153=156=158=159=157=162=166=169=171=170=174=177=180=183=186=188=187=191,data=0.000054=0.000879=0.000160=0.002400=15=0.002400=558.000000=749.000000=613.066667=9196.000000=15=9196.000000=322.000000=405.000000=351.733333=5276.000000=15=5276.000000=558.000000=749.000000=613.066667=9196.000000=15=9196.000000=322.000000=405.000000=351.733333=5276.000000=15=5276.000000=0.000000=0.002400=0.000001=15=13=1.000000=1.000000=15.000000=15=1.000000=15.000000=0.000054=0.000879=0.000160=0.002400=15=0.002400
+__rec=node,id=269,attr=10,data=512,parent=3
+__rec=node,id=275,attr=8,data=spot.channels,parent=269
+__rec=node,id=274,attr=8,data=spot.options,parent=269
+__rec=node,id=272,attr=10,data=512,parent=1
+__rec=node,id=273,attr=8,data=spot.format.version,parent=272
+__rec=node,id=271,attr=8,data=spot.timeseries.metrics,parent=269
+__rec=node,id=270,attr=8,data=spot.metrics,parent=269
+__rec=node,id=16,attr=10,data=1612,parent=1
+__rec=node,id=17,attr=8,data=mpi.world.size,parent=16
+__rec=node,id=18,attr=10,data=1612,parent=3
+__rec=node,id=19,attr=8,data=cali.caliper.version,parent=18
+__rec=node,id=20,attr=19,data=2.11.0
+__rec=node,id=21,attr=17,data=16,parent=20
+__rec=node,id=276,attr=270,data=min#inclusive#sum#time.duration\,max#inclusive#sum#time.duration\,avg#inclusive#sum#time.duration\,sum#inclusive#sum#time.duration\,min#sum#sum#papi.PAPI_L1_DCM\,max#sum#sum#papi.PAPI_L1_DCM\,avg#sum#sum#papi.PAPI_L1_DCM\,sum#sum#sum#papi.PAPI_L1_DCM\,min#sum#sum#papi.PAPI_L2_DCM\,max#sum#sum#papi.PAPI_L2_DCM\,avg#sum#sum#papi.PAPI_L2_DCM\,sum#sum#sum#papi.PAPI_L2_DCM\,min#inclusive#sum#papi.PAPI_L1_DCM\,max#inclusive#sum#papi.PAPI_L1_DCM\,avg#inclusive#sum#papi.PAPI_L1_DCM\,sum#inclusive#sum#papi.PAPI_L1_DCM\,min#inclusive#sum#papi.PAPI_L2_DCM\,max#inclusive#sum#papi.PAPI_L2_DCM\,avg#inclusive#sum#papi.PAPI_L2_DCM\,sum#inclusive#sum#papi.PAPI_L2_DCM\,variance#inclusive#sum#time.duration\,min#min#aggregate.slot\,min#sum#rc.count\,avg#sum#rc.count\,max#sum#rc.count\,sum#sum#rc.count\,min#scale#sum#time.duration.ns\,max#scale#sum#time.duration.ns\,avg#scale#sum#time.duration.ns\,sum#scale#sum#time.duration.ns,parent=21
+__rec=node,id=277,attr=271,data=,parent=276
+__rec=node,id=278,attr=273,data=2,parent=277
+__rec=node,id=279,attr=274,data=time.variance\,profile.mpi\,node.order\,region.count\,time.exclusive,parent=278
+__rec=node,id=280,attr=275,data=regionprofile,parent=279
+__rec=node,id=194,attr=10,data=84,parent=3
+__rec=node,id=195,attr=8,data=adiak.subcategory,parent=194
+__rec=node,id=196,attr=10,data=84,parent=1
+__rec=node,id=197,attr=8,data=adiak.category,parent=196
+__rec=node,id=198,attr=8,data=adiak.type,parent=194
+__rec=node,id=199,attr=198,data=string,parent=3
+__rec=node,id=200,attr=197,data=2,parent=199
+__rec=node,id=201,attr=195,data=none,parent=200
+__rec=node,id=202,attr=10,data=1612,parent=201
+__rec=node,id=203,attr=8,data=implementation_source,parent=202
+__rec=node,id=204,attr=198,data=int,parent=1
+__rec=node,id=205,attr=197,data=2,parent=204
+__rec=node,id=206,attr=195,data=none,parent=205
+__rec=node,id=207,attr=10,data=1612,parent=206
+__rec=node,id=208,attr=8,data=group_num,parent=207
+__rec=node,id=209,attr=8,data=scalability,parent=202
+__rec=node,id=210,attr=8,data=num_procs,parent=207
+__rec=node,id=211,attr=8,data=input_type,parent=202
+__rec=node,id=212,attr=198,data=unsigned long,parent=2
+__rec=node,id=213,attr=197,data=2,parent=212
+__rec=node,id=214,attr=195,data=none,parent=213
+__rec=node,id=215,attr=10,data=1612,parent=214
+__rec=node,id=216,attr=8,data=input_size,parent=215
+__rec=node,id=217,attr=8,data=size_of_data_type,parent=215
+__rec=node,id=218,attr=8,data=data_type,parent=202
+__rec=node,id=219,attr=8,data=programming_model,parent=202
+__rec=node,id=220,attr=8,data=algorithm,parent=202
+__rec=node,id=221,attr=195,data=host,parent=200
+__rec=node,id=222,attr=10,data=1612,parent=221
+__rec=node,id=223,attr=8,data=cluster,parent=222
+__rec=node,id=224,attr=198,data=set of string,parent=3
+__rec=node,id=225,attr=197,data=2,parent=224
+__rec=node,id=226,attr=195,data=runinfo,parent=225
+__rec=node,id=227,attr=10,data=1612,parent=226
+__rec=node,id=228,attr=8,data=cmdline,parent=227
+__rec=node,id=229,attr=198,data=set of path,parent=3
+__rec=node,id=230,attr=197,data=2,parent=229
+__rec=node,id=231,attr=195,data=binary,parent=230
+__rec=node,id=232,attr=10,data=1612,parent=231
+__rec=node,id=233,attr=8,data=libraries,parent=232
+__rec=node,id=234,attr=198,data=date,parent=2
+__rec=node,id=235,attr=197,data=2,parent=234
+__rec=node,id=236,attr=195,data=runinfo,parent=235
+__rec=node,id=237,attr=10,data=1612,parent=236
+__rec=node,id=238,attr=8,data=launchdate,parent=237
+__rec=node,id=239,attr=8,data=spot:time.variance,parent=18
+__rec=node,id=240,attr=8,data=spot:time.exclusive,parent=18
+__rec=node,id=241,attr=8,data=spot:region.count,parent=18
+__rec=node,id=242,attr=8,data=spot:profile.mpi,parent=18
+__rec=node,id=243,attr=8,data=spot:output,parent=18
+__rec=node,id=244,attr=8,data=spot:node.order,parent=18
+__rec=node,id=245,attr=8,data=spot:cache_misses,parent=18
+__rec=node,id=246,attr=8,data=cali.channel,parent=18
+__rec=node,id=247,attr=246,data=spot
+__rec=node,id=248,attr=245,data=true,parent=247
+__rec=node,id=249,attr=244,data=true,parent=248
+__rec=node,id=250,attr=243,data=../caliper_output/cache_miss/radix_sort/radix-sorted-p16-a27-11868887.cali,parent=249
+__rec=node,id=251,attr=242,data=true,parent=250
+__rec=node,id=252,attr=241,data=true,parent=251
+__rec=node,id=253,attr=240,data=true,parent=252
+__rec=node,id=254,attr=239,data=true,parent=253
+__rec=node,id=255,attr=238,data=1730427296,parent=254
+__rec=node,id=256,attr=233,data=[/scratch/group/csce435-f24/Caliper/caliper/lib64/libcaliper.so.2\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/libmpicxx.so.12\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/release/libmpi.so.12\,/lib64/librt.so.1\,/lib64/libpthread.so.0\,/lib64/libdl.so.2\,/sw/eb/sw/GCCcore/8.3.0/lib64/libstdc++.so.6\,/lib64/libm.so.6\,/sw/eb/sw/GCCcore/8.3.0/lib64/libgcc_s.so.1\,/lib64/libc.so.6\,/sw/eb/sw/CUDA/11.8.0/extras/CUPTI/lib64/libcupti.so.11.8\,/sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpapi.so.6.0\,/lib64/ld-linux-x86-64.so.2\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/libfabric.so.1\,/lib64/libutil.so.1\,/sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpfm.so.4\,/lib64/libnuma.so\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libshm-fi.so\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libmlx-fi.so\,/lib64/libucp.so.0\,/sw/eb/sw/zlib/1.2.11-GCCcore-8.3.0/lib/libz.so.1\,/usr/lib64/libuct.so.0\,/usr/lib64/libucs.so.0\,/usr/lib64/libucm.so.0\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libverbs-fi.so\,/lib64/librdmacm.so.1\,/lib64/libibverbs.so.1\,/lib64/libnl-3.so.200\,/lib64/libnl-route-3.so.200\,/usr/lib64/libibverbs/libmlx5-rdmav34.so\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libpsmx2-fi.so\,/lib64/libpsm2.so.2\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libsockets-fi.so\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/librxm-fi.so\,/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libtcp-fi.so\,/usr/lib64/ucx/libuct_ib.so.0\,/usr/lib64/ucx/libuct_rdmacm.so.0\,/usr/lib64/ucx/libuct_cma.so.0\,/usr/lib64/ucx/libuct_knem.so.0\,/usr/lib64/ucx/libuct_xpmem.so.0\,/usr/lib64/libxpmem.so.0],parent=255
+__rec=node,id=257,attr=228,data=[./main\,3\,0\,27],parent=256
+__rec=node,id=258,attr=223,data=c,parent=257
+__rec=node,id=259,attr=220,data=radix,parent=258
+__rec=node,id=260,attr=219,data=mpi,parent=259
+__rec=node,id=261,attr=218,data=int,parent=260
+__rec=node,id=262,attr=217,data=4,parent=261
+__rec=node,id=263,attr=216,data=268435456,parent=262
+__rec=node,id=264,attr=211,data=Sorted,parent=263
+__rec=node,id=265,attr=210,data=16,parent=264
+__rec=node,id=266,attr=209,data=strong,parent=265
+__rec=node,id=267,attr=208,data=3,parent=266
+__rec=node,id=268,attr=203,data=handwritten,parent=267
+__rec=globals,ref=280=268
