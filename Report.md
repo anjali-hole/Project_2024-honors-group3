@@ -816,15 +816,18 @@ Larger number of processes do seem to be consuming more memory and time, likely 
 !["comm_large"](Graphs/radix_sort/radix_strong_comm_16.jpg "comm_large")
 !["comm_large"](Graphs/radix_sort/radix_strong_comm_22.jpg "comm_large")
 !["comm_large"](Graphs/radix_sort/radix_strong_comm_28.jpg "comm_large")
+
 These are graphs of the average time for the strong scaling `comm_large` caliper section for the smallest, middle, and largest input sizes. Since the only time communication occurs in radix sort is to send all data from all processes to all processes using `MPI_Alltoall` or `MPI_Alltoallv`, there is no `comm_small` section. We see for the smallest input size that all input types are similar in time, with some spikes occasionally, which are likely due to unusual job runs. We see the same trend for the middle input size of 2^22. For the largest input size, we see that communication time actually decreases initially, hitting a minimum around 64 processes, then increasing again all the way to 1024 processes. The initial decrease is likely because so much data needs to be communicated between the 2 processes that it becomes inefficient. The increase at the end is likely because more processes need more time to communicate due to distance between the actual nodes and processors. We find a "sweet spot" around 64 processes to balance processor count and input size per process in communication time.
 
 !["comm_large"](Graphs/radix_sort/radix_weak_comm.jpg "comm_large")
+
 This is a weak scaling plot for communication with average time. We see that most input types are roughly equal in time until 512 processes, at which point the 1% perturbed and sorted data take the most communication time. This is likely because the data is initially in just a few buckets, so moving them around takes more time. Another possibility is that 512 processors have more variance in communication time, so these trends may just be due to chance.
 
 !["comm_large"](Graphs/radix_sort/radix_speedup_comm_1p.jpg "comm_large")
 !["comm_large"](Graphs/radix_sort/radix_speedup_comm_random.jpg "comm_large")
 !["comm_large"](Graphs/radix_sort/radix_speedup_comm_sorted.jpg "comm_large")
 !["comm_large"](Graphs/radix_sort/radix_speedup_comm_reverse.jpg "comm_large")
+
 In terms of communication speedup, we see that all input types have roughly the same trends. The larger input sizes (2^24 and up) see a noticable speedup with number of processes, levelling off around 128 processes.
 
 Communication time has a roughly linear relationship with the number of processes, regardless of input size and type. The magnitude of this relationship increases with input size, with larger inputs taking much longer to communicate than smaller ones. This makes sense as the algorithm uses `MPI_Alltoall` for communication, which is largely dependent on the number of processes performing the communication. There is not much difference between input types, which also makes sense because regardless of the data distribution the algorithm has to communicate its elements to all others.
@@ -833,49 +836,59 @@ Communication time has a roughly linear relationship with the number of processe
 !["comp_large"](Graphs/radix_sort/radix_strong_comp_16.jpg "comp_large")
 !["comp_large"](Graphs/radix_sort/radix_strong_comp_22.jpg "comp_large")
 !["comp_large"](Graphs/radix_sort/radix_strong_comp_28.jpg "comp_large")
+
 These are graphs of the average time for the `comp_large` caliper section using strong scaling with the smallest, middle, and largest input sizes. There is no `comp_small` caliper section since radix sort always sorts the entire local array, never just a portion of it. We can see that computation time does decrease logarithmically with the number of processes, which allows us to say that parallelization has made a significant difference in computation time. We can see that all input types have similar runtimes except for random, which takes a little longer. This is likely due to the distribution of the number of elements per process since the actual computation time should be almost the same regardless of input type. Radix sort is a noncomparison sorting algorithm, running in O(dn) time, where d is the max number of digits in the data and n is the number of elements. Since the max number of digits should be almost the same for each input type, the number of elements is the only thing that could cause this increase.
 
 !["comp_large"](Graphs/radix_sort/radix_weak_comp.jpg "comp_large")
+
 We can see that the weak scaling plot for computation stays relatively constant regardless of number of processes, increasing only slightly. Random again has the highest time, with the other 3 input types being almost the same. The consistency of this plot makes sense for the reason highlighted earlier for the strong scaling: radix sort only depends on the number of elements given to the process, so since this number is the same for all processes, their times reflect it.
 
 !["comp_large"](Graphs/radix_sort/radix_speedup_comp_1p.jpg "comp_large")
 !["comp_large"](Graphs/radix_sort/radix_speedup_comp_random.jpg "comp_large")
 !["comp_large"](Graphs/radix_sort/radix_speedup_comp_sorted.jpg "comp_large")
 !["comp_large"](Graphs/radix_sort/radix_speedup_comp_reverse.jpg "comp_large")
+
 We can see that speedup for computation is the same for all input types. It is an almost diagonal line, dropping off only at 128 processes for the smallest input size. This means that we are always speeding up when there are more processes, which makes sense because the number of elements per process decreases, and that is the main thing affecting computation time. We see for smaller input sizes that we lose speedup around 128 processes, which is where there is no longer enough data per process to make further parallelization useful. For larger (2^20 and up) sizes, we still see significant speedup all the way to 1024 processes.
 
 #### Main
 !["main"](Graphs/radix_sort/radix_strong_main_16.jpg "main")
 !["main"](Graphs/radix_sort/radix_strong_main_22.jpg "main")
 !["main"](Graphs/radix_sort/radix_strong_main_28.jpg "main")
+
 These are plots of full execution (main) time for radix sort for the smallest, middle, and largest input sizes. We see for the smallest one that it follows the communcation time strong scaling plot fairly closely, especially with the spikes in data occasionally. The middle size begins to combine the plots for communication and computation, with computation time being the bottleneck for small process counts and communication time taking over around 32 processes. The largest input size follows the computation plot almost exactly, with a slight increase at the end which can be attributed to the increase in communication time.
 
 !["main"](Graphs/radix_sort/radix_weak_main.jpg "main")
+
 The weak scaling plot shows primarily the communication time increase at 128 processes, staying relatively constant before that.
 
 !["main"](Graphs/radix_sort/radix_speedup_main_1p.jpg "main")
 !["main"](Graphs/radix_sort/radix_speedup_main_random.jpg "main")
 !["main"](Graphs/radix_sort/radix_speedup_main_sorted.jpg "main")
 !["main"](Graphs/radix_sort/radix_speedup_main_reverse.jpg "main")
+
 The speedup plots for main are also very similar regardless of input type. Speedup drops off in main at different times for each input size, with larger input sizes having drop offs at higher process counts. This makes sense because there is a balance between input size and process count which will actually make a difference. 
 
 #### Cache Misses
 !["main"](Graphs/radix_sort/radix_L1_main_random.jpg "main")
 !["main"](Graphs/radix_sort/radix_L1_main_sorted.jpg "main")
 !["main"](Graphs/radix_sort/radix_L1_main_reverse.jpg "main")
+
 These are plots of the L1 cache misses on main for input types random, sorted, and reverse sorted. We can see that regardless of input type, the number of cache misses is the same on L1. There are more misses for the higher input size, which makes sense because there is more data that cannot be easily stored in the cache.
 
 !["main"](Graphs/radix_sort/radix_L2_main_random.jpg "main")
 !["main"](Graphs/radix_sort/radix_L2_main_sorted.jpg "main")
 !["main"](Graphs/radix_sort/radix_L2_main_reverse.jpg "main")
+
 On L2, however, sorted and reverse sorted have similar trends, but random is different. This could be because random may require more communication than the other input types, so cache misses would go up with the number of processes for the smaller input size as compared to the other input types.
 
 !["comp"](Graphs/radix_sort/radix_L1_comp_random.jpg "comp")
 !["comp"](Graphs/radix_sort/radix_L2_comp_random.jpg "comp")
+
 We can see that the L1 and L2 plots for computation are very similar, with a larger amount of cache misses for the larger input size. This makes sense because there is more data to handle, so a higher portion of it is not able to be stored in the cache.
 
 !["comm"](Graphs/radix_sort/radix_L1_comm_random.jpg "comm")
 !["comm"](Graphs/radix_sort/radix_L2_comm_random.jpg "comm")
+
 The communication plots show that on the L1 cache the higher input size has again a greater amount of cache misses. The L2 plot is different, with the smaller input size having more misses at 32 processes. This could be an anomaly resulting from a bad run.
 
 ### Column Sort
