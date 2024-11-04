@@ -758,6 +758,13 @@ MPI_Finalize()
 <img src="Graphs/bitonic_sort/weak_scaling/main_random.png" width="700">
 <img src="Graphs/bitonic_sort/weak_scaling/main_reverse.png" width="700">
 
+<img src="Graphs/bitonic_sort/cache_miss/main_L1_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L1_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L1_reverse.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L2_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L2_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L2_reverse.png" width="700">
+
 #### Computation
 <img src="Graphs/bitonic_sort/strong_scaling/comp_16.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comp_18.png" width="700">
@@ -777,6 +784,13 @@ MPI_Finalize()
 <img src="Graphs/bitonic_sort/weak_scaling/comp_random.png" width="700">
 <img src="Graphs/bitonic_sort/weak_scaling/comp_reverse.png" width="700">
 
+<img src="Graphs/bitonic_sort/cache_miss/comp_L1_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L1_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L1_reverse.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L2_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L2_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L2_reverse.png" width="700">
+
 #### Communication
 <img src="Graphs/bitonic_sort/strong_scaling/comm_16.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comm_18.png" width="700">
@@ -795,6 +809,13 @@ MPI_Finalize()
 <img src="Graphs/bitonic_sort/weak_scaling/comm_1_perc.png" width="700">
 <img src="Graphs/bitonic_sort/weak_scaling/comm_random.png" width="700">
 <img src="Graphs/bitonic_sort/weak_scaling/comm_reverse.png" width="700">
+
+<img src="Graphs/bitonic_sort/cache_miss/comm_L1_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comm_L1_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comm_L1_reverse.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comm_L2_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comm_L2_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comm_L2_reverse.png" width="700">
 
 ### Sample Sort
 
