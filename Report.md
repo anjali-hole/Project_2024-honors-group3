@@ -819,33 +819,106 @@ MPI_Finalize()
 
 ### Sample Sort
 
-#### Full Program
-<img src="Graphs/sample_sort/weak_scale/main_sorted.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/main_perturbed.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/main_random.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/main_reversed.png" width="700">
+#### Communication
 
-Overall, relative to the number of processors, the communication portion is the faster growing portion of the workload, so it is the portion most reflected in the main graphs. The computation portion is more significant for a lower processor count, but comparing magnitudes with the similar comm data points, it is smaller for processor amounts above about 128 processors. Because the communication time is independent of the data type, there are not many notable differences on the main graphs other than certain outliers. The random data takes significantly longer than the other three strategies, which is discussed below.
+##### Strong Scaling
+<img src="Graphs/sample_sort/strong_scale/Comm_16.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Comm_20.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Comm_24.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Comm_28.png" width="700">
+
+The time spent communicating is linearly proportional to the number of processes for all but the 2^28 graph, which is expected since each additional processor must communicate with all existing processors a constant amount of times. However, at this larger data size, the time is roughly constant when varying processors except for the single data point at 1024. This is likely because the bottleneck becomes the actual speed of sending data rather than forming and reforming connections.\
+From input size 2^16 to 2^20, the communication times do not meaningfully increase. This is because the overhead of establishing the channels accounts for most of the time. However, between the larger sizes, the time taken increases linearly with data size over most of the processor spectrum. \
+Comparing between the different input types, random is the slowest, with the other three types staying mostly clustered together. This is because for data sets with a predictable pattern, there will be a significant number of the processors that each process does not have to send data to.
+
+##### Speedup
+<img src="Graphs/sample_sort/strong_scale_speedup/Comm_sorted.png" width="700">
+<img src="Graphs/sample_sort/strong_scale_speedup/Comm_random.png" width="700">
+
+Communication time is minimized for a smaller number of processors, so almost all times do not improve over their time with 2 processors, resulting in a decreasing speedup for this step of the process.\
+This decline is worse for the smaller data sets, which is because they are setting up more communication channels but then not really taking advantage of them since only a small amount of data is sent.
+
+##### Weak Scaling
+<img src="Graphs/sample_sort/weak_scale/Comm_sorted.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/Comm_reversed.png" width="700">
+
+The time taken for communication increases linearly with the number of processors, since that means more send operations between processors.
+
+##### Cache Misses
+<img src="Graphs/sample_sort/cache_misses/L1_comm_sorted.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L2_comm_sorted.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L1_comm_random.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L2_comm_random.png" width="700">
+
+The L1 cache misses are effectively the same for the two different input types. They also do not change much for a different number of processors.\
+For the L2 cache, the misses for 2^29 elements are about the same, but sorted input leads to significantly more misses for 2^28. In all cases, there are many more cache misses at 32 processors compared to 16.
 
 #### Computation
-<img src="Graphs/sample_sort/weak_scale/comp_sorted.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/comp_perturbed.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/comp_random.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/comp_reversed.png" width="700">
 
-Computation time is roughly proportional to the log of the number of processors, with the random data showing the most consistent trend. There are occasional spikes in the time taken across all of the input sizes, and this is most likely because of a poor choice of splitters. If the window between two of the splitters is too wide, then one process has to sort much more data than it should, which pushes the average of sorting times up.\
-The time taken appears to be directly proportional to the input size; however, based on the time complexity of sequential sorting, it is actually proportional to nlogn, but the graph is not on a large enough scale to show this. \
-The type of data used does make a significant difference in the computation portion, and mostly applies a scale factor to the performance. Sorted and reverse sorted take about the same amount of time, with 1% perturbed taking an additional 50% time, and random taking anout 3x as long. The reason for the large spike in random is likely due to the increased randomness in choosing the correct splitter. The sampling strategy used is taking 3 samples from each process, so with sorted and reverse sorted, there is guaranteed to be exactly one splitter within each intitial array, and this will usually hold true for the 1% perturbed, while there is likely a more unbalanced workload for the random data leading to certain processes taking much longer.\
-The sorted and reverse sorted values do have large spikes at 32 and 1024 processors for 2^28 and 2^26 elements respectively. This is where the total number of elements exceeds the 32 bit integer limit, which then allows for more randomness in the splitter distribution since there will be two splitters within that range of data that decide where it goes.
+##### Strong Scaling
+<img src="Graphs/sample_sort/strong_scale/Comp_16.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Comp_20.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Comp_24.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Comp_28.png" width="700">
 
-#### Communication
-<img src="Graphs/sample_sort/weak_scale/comm_sorted.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/comm_perturbed.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/comm_random.png" width="700">
-<img src="Graphs/sample_sort/weak_scale/comm_reversed.png" width="700">
+The time taken to sort the data decreases linearly with the number of processors, which indicates that the additional processors are being utilized effectively for the sorting. \
+Between the different data sizes, the sorting time is scaling with nlogn. In most cases it is slightly better, jumping by about 20x instead of the 24x that would be expected for an 8x bigger input. \
+Random data is significantly slower, and perturbed data is slightly slower than sorted and reversed data. This is because there will be more variance in how many each elements get for each process since there is a guranteed number of splitters within each processor's starting data (3). This means that a processor can get 2 processor's worth of data at maximum for sorted and reversed data, while there is no such guarantee for random data. As more processors get added, the average amount of data each processor has to sort decreases, so the penalty for one processor getting too much data decreases, which is why the difference between random data and the other data types goes away for more processors.
 
-The time spent communicating is linearly proportional to the number of processes, which is expected since each additional processor must communicate with all existing processors a constant amount of times.\
-It is also directly proportional to the input size, since each new element of data needs to be sent to its corresponding process.
+##### Speedup
+<img src="Graphs/sample_sort/strong_scale_speedup/Comp_sorted.png" width="700">
+<img src="Graphs/sample_sort/strong_scale_speedup/Comp_random.png" width="700">
+
+The speedup does increase linearly across almost the entire range measured. For higher processor counts, the speedup gains do start to slightly decrease, and this effect is more pronounced for smaller inputs. This is because the size of the array of splitters becomes bigger, which means that the binary search to determine which processor should get each data element takes longer. \
+The speedups between the different data types are relatively consistent.
+
+##### Weak Scaling
+<img src="Graphs/sample_sort/weak_scale/Comp_sorted.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/Comp_reversed.png" width="700">
+
+The computation time increases logarithmically with the number of processors used. Though the amount of time to sort the data should stay constant since the average sort size should stay the same, the time taken to partition the elements into buckets is proportional to log(p).\
+The type of data used does not significantly affect the weak scaling measurements.
+
+##### Cache Misses
+<img src="Graphs/sample_sort/cache_misses/L1_comp_sorted.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L2_comp_sorted.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L1_comp_random.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L2_comp_random.png" width="700">
+
+All of the cache misses for the computation show roughly the same pattern. Doubling the size of the array doubles the number of cache misses, and doubling the number of processors slightly decreases the amount of cache misses observed. This holds for different input types and for both the L1 and L2 caches.
+
+#### Main
+
+##### Strong Scaling
+<img src="Graphs/sample_sort/strong_scale/Main_16.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Main_20.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Main_24.png" width="700">
+<img src="Graphs/sample_sort/strong_scale/Main_28.png" width="700">
+
+These graphs demonstrate the difference between processor numbers for different input sizes, and show that the optimal number of processors varies between the different input sizes. For 2^16, 2 processors is the fastest option available since there is not much data to sort in the first place, so communication overhead is counterproductive; for 2^20, about 32 processors is best, and adding the communication time for multiple nodes offsets the gains; for 2^24, about 128 processors is best; even for 2^28, anything beyond 256 processors does not help sort the data faster. \
+The additional time taken for the communication and computation with random data does manifest in the main graphs, with random taking noticeably longer to run.
+
+
+##### Speedup
+<img src="Graphs/sample_sort/strong_scale_speedup/Main_sorted.png" width="700">
+<img src="Graphs/sample_sort/strong_scale_speedup/Main_random.png" width="700">
+
+The speedup graphs show the strong scaling data in a slightly different format, and the gradual movement of the peaks towards the right shows the benefits of adding more processors as data size increases. However, no tested data size is large enough for 1024 processors to be practical, and so all of the plots start to decrease at some point.
+
+##### Weak Scaling
+<img src="Graphs/sample_sort/weak_scale/Main_sorted.png" width="700">
+<img src="Graphs/sample_sort/weak_scale/Main_reversed.png" width="700">
+
+The linear increase in the communication time dominates the logarithmic increase of the computation time, and so the weak scaling graphs look most similar to those of the communication. This indicates the best place to look for further optimizations would be in the communication stage.
+
+##### Cache Misses
+<img src="Graphs/sample_sort/cache_misses/L1_main_sorted.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L2_main_sorted.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L1_main_random.png" width="700">
+<img src="Graphs/sample_sort/cache_misses/L2_main_random.png" width="700">
+
+The L1 cache misses are relatively consistent across the different input types. They double when doubling the input size, and slightly decrease for more processors. They look most similar to the cache miss graphs for comp, since that is where about 90% of the L1 misses come from. \
+The L2 graphs are essentially the same as the comm graphs, since the computation accounts for less than a trillionth of the L2 misses.
 
 
 ### Merge Sort
