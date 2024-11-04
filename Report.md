@@ -851,15 +851,32 @@ It is also directly proportional to the input size, since each new element of da
 ### Merge Sort
 
 #### Communication
-<img src="Graphs/merge_sort/comm_sorted.jpg" width="700">
-<img src="Graphs/merge_sort/comm_perturbed.jpg" width="700">
-<img src="Graphs/merge_sort/comm_random.jpg" width="700">
+<img src="Graphs/merge_sort/comm_speedup_sorted.png" width="300">
+<img src="Graphs/merge_sort/comm_speedup_perturbed.png" width="300">
+<img src="Graphs/merge_sort/comm_speedup_random.png" width="300">
+<img src="Graphs/merge_sort/comm_speedup_reverse.png" width="300">
+
+<img src="Graphs/merge_sort/comm_ws_sorted.png" width="300">
+<img src="Graphs/merge_sort/comm_ws_perturbed.png" width="300">
+<img src="Graphs/merge_sort/comm_ws_random.png" width="300">
+<img src="Graphs/merge_sort/comm_ws_reverse.png" width="300">
+
+<img src="Graphs/merge_sort/comm_ss_16.png" width="150">
+<img src="Graphs/merge_sort/comm_ss_18.png" width="150">
+<img src="Graphs/merge_sort/comm_ss_20.png" width="150">
+<img src="Graphs/merge_sort/comm_ss_22.png" width="150">
+<img src="Graphs/merge_sort/comm_ss_24.png" width="150">
+<img src="Graphs/merge_sort/comm_ss_26.png" width="150">
+<img src="Graphs/merge_sort/comm_ss_28.png" width="150">
+
+
+#### Computation
+
+
+#### Main
 <img src="Graphs/merge_sort/comm_reverse.jpg" width="700">
 
-Communication time is proportional to the number of processes as expected. It is also notable that the growth in communcation time corresponds with the input sizes as well, with greater growth for larger input sizes. 
-
-Note: The number of runs at this stage are limited due to errors in job submissions.There are runs for higher num_procs, but they aren't included in the report because not all the runs for the given number of processes are there.
-Larger number of processes do seem to be consuming more memory and time, likely do to MPI_Gather() being utilized.
+#### Cache Misses
 
 ### Radix Sort
 #### Communication
