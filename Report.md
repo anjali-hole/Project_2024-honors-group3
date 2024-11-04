@@ -924,32 +924,101 @@ The L2 graphs are essentially the same as the comm graphs, since the computation
 ### Merge Sort
 
 #### Communication
-<img src="Graphs/merge_sort/comm_speedup_sorted.png" width="300">
-<img src="Graphs/merge_sort/comm_speedup_perturbed.png" width="300">
-<img src="Graphs/merge_sort/comm_speedup_random.png" width="300">
-<img src="Graphs/merge_sort/comm_speedup_reverse.png" width="300">
 
+##### Weak Scaling
 <img src="Graphs/merge_sort/comm_ws_sorted.png" width="300">
 <img src="Graphs/merge_sort/comm_ws_perturbed.png" width="300">
 <img src="Graphs/merge_sort/comm_ws_random.png" width="300">
 <img src="Graphs/merge_sort/comm_ws_reverse.png" width="300">
 
-<img src="Graphs/merge_sort/comm_ss_16.png" width="150">
-<img src="Graphs/merge_sort/comm_ss_18.png" width="150">
-<img src="Graphs/merge_sort/comm_ss_20.png" width="150">
-<img src="Graphs/merge_sort/comm_ss_22.png" width="150">
-<img src="Graphs/merge_sort/comm_ss_24.png" width="150">
-<img src="Graphs/merge_sort/comm_ss_26.png" width="150">
-<img src="Graphs/merge_sort/comm_ss_28.png" width="150">
+##### Strong Scaling
+<img src="Graphs/merge_sort/comm_ss_16.png" width="300">
+<img src="Graphs/merge_sort/comm_ss_18.png" width="300">
+<img src="Graphs/merge_sort/comm_ss_20.png" width="300">
+<img src="Graphs/merge_sort/comm_ss_22.png" width="300">
+<img src="Graphs/merge_sort/comm_ss_24.png" width="300">
+<img src="Graphs/merge_sort/comm_ss_26.png" width="300">
+<img src="Graphs/merge_sort/comm_ss_28.png" width="300">
+
+##### Speedup
+<img src="Graphs/merge_sort/comm_speedup_sorted.png" width="300">
+<img src="Graphs/merge_sort/comm_speedup_perturbed.png" width="300">
+<img src="Graphs/merge_sort/comm_speedup_random.png" width="300">
+<img src="Graphs/merge_sort/comm_speedup_reverse.png" width="300">
+
+##### Cache Misses
+<img src="Graphs/merge_sort/l1_cm_comm_sorted.png" width="300">
+<img src="Graphs/merge_sort/l1_cm_comm_random.png" width="300">
+<img src="Graphs/merge_sort/l1_cm_comm_reverse.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_comm_sorted.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_comm_random.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_comm_reverse.png" width="300">
 
 
 #### Computation
 
+##### Weak Scaling
+<img src="Graphs/merge_sort/comp_ws_sorted.png" width="300">
+<img src="Graphs/merge_sort/comp_ws_perturbed.png" width="300">
+<img src="Graphs/merge_sort/comp_ws_random.png" width="300">
+<img src="Graphs/merge_sort/comp_ws_reverse.png" width="300">
+
+##### Strong Scaling
+<img src="Graphs/merge_sort/comp_ss_16.png" width="300">
+<img src="Graphs/merge_sort/comp_ss_18.png" width="300">
+<img src="Graphs/merge_sort/comp_ss_20.png" width="300">
+<img src="Graphs/merge_sort/comp_ss_22.png" width="300">
+<img src="Graphs/merge_sort/comp_ss_24.png" width="300">
+<img src="Graphs/merge_sort/comp_ss_26.png" width="300">
+<img src="Graphs/merge_sort/comp_ss_28.png" width="300">
+
+##### Speedup
+<img src="Graphs/merge_sort/comp_speedup_sorted.png" width="300">
+<img src="Graphs/merge_sort/comp_speedup_perturbed.png" width="300">
+<img src="Graphs/merge_sort/comp_speedup_random.png" width="300">
+<img src="Graphs/merge_sort/comp_speedup_reverse.png" width="300">
+
+##### Cache Misses
+<img src="Graphs/merge_sort/l1_cm_comp_sorted.png" width="300">
+<img src="Graphs/merge_sort/l1_cm_comp_random.png" width="300">
+<img src="Graphs/merge_sort/l1_cm_comp_reverse.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_comp_sorted.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_comp_random.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_comp_reverse.png" width="300">
+
 
 #### Main
-<img src="Graphs/merge_sort/comm_reverse.jpg" width="700">
 
-#### Cache Misses
+##### Weak Scaling
+<img src="Graphs/merge_sort/main_ws_sorted.png" width="300">
+<img src="Graphs/merge_sort/main_ws_perturbed.png" width="300">
+<img src="Graphs/merge_sort/main_ws_random.png" width="300">
+<img src="Graphs/merge_sort/main_ws_reverse.png" width="300">
+
+##### Strong Scaling
+<img src="Graphs/merge_sort/main_ss_16.png" width="300">
+<img src="Graphs/merge_sort/main_ss_18.png" width="300">
+<img src="Graphs/merge_sort/main_ss_20.png" width="300">
+<img src="Graphs/merge_sort/main_ss_22.png" width="300">
+<img src="Graphs/merge_sort/main_ss_24.png" width="300">
+<img src="Graphs/merge_sort/main_ss_26.png" width="300">
+<img src="Graphs/merge_sort/main_ss_28.png" width="300">
+
+##### Speedup
+<img src="Graphs/merge_sort/main_speedup_sorted.png" width="300">
+<img src="Graphs/merge_sort/main_speedup_perturbed.png" width="300">
+<img src="Graphs/merge_sort/main_speedup_random.png" width="300">
+<img src="Graphs/merge_sort/main_speedup_reverse.png" width="300">
+
+##### Cache Misses
+<img src="Graphs/merge_sort/l1_cm_main_sorted.png" width="300">
+<img src="Graphs/merge_sort/l1_cm_main_random.png" width="300">
+<img src="Graphs/merge_sort/l1_cm_main_reverse.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_main_sorted.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_main_random.png" width="300">
+<img src="Graphs/merge_sort/l2_cm_main_reverse.png" width="300">
+
+
 
 ### Radix Sort
 #### Communication
