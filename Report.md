@@ -1087,14 +1087,26 @@ The communication plots show that on the L1 cache the higher input size has agai
 
 ### Column Sort
 
-In the development of the column sort algorithm for our project, we have successfully implemented and tested the initial eight steps as outlined in the referenced academic paper, utilizing an example with 27 elements across 3 processors (Below is a graph for this). This configuration demonstrated flawless performance, affirming the theoretical efficiency of the steps in optimizing both space complexity and the utilization of parallel processing architecture. The pseudocode provided has been meticulously updated to enhance clarity and detail concerning the operational mechanics of the algorithm, complemented by diagrams in Harsh's report that illustrate these processes.
+### Computation
 
-<img src="Graphs/radix_sort/column_weak_27.png" width="700">
+!["comp"](Graphs/column_sort/comp_large_strong_scaling.png "comp")
+!["comp"](Graphs/column_sort/comp_large_weak_scaling.png "comp")
+!["comp"](Graphs/column_sort/comp_large_speedup.png "comp")
 
-During our implementation, we utilized the Caliper profiling tool to accurately time MPI calls, confirming the algorithm's performance efficiency during these stages. However, despite the successful execution of steps 1 through 7, we encountered an unexplained segmentation fault after step 7. This fault may be attributed to the stringent and specific requirements necessary for the proper function of column sort. Notably, the algorithm demands that the number of rows be at least double the square of one less than the number of columns (rows ≥ 2*(columns - 1)²), a condition which might not have been met under our test parameters.
+For computation, we can see the effects of parallel programming in column sort, as the computation time is decreasing exponentially with the number of processes. For weak scaling, it is interesting as computation is the only case where scaling up did not increase computation time. This may be due to the sequential nature of the algorithm. Looking at speedup, computation displayed the expected behavior as the speedup was logarithmically and positively related to the number of processes.
 
-To address and resolve this segmentation fault, our testing plan will systematically explore different combinations of input sizes and processor counts, ensuring they align with the algorithm's constraints. This approach will help determine the optimal configurations that prevent runtime errors and maximize efficiency. By methodically varying these parameters and observing the outcomes, we aim to pinpoint the precise conditions under which the algorithm fails and subsequently refine our implementation to ensure robust performance across a broader range of scenarios. This comprehensive testing strategy is essential to validate the algorithm's functionality and reliability in diverse operational environments.
+### Communication
+!["comp"](Graphs/column_sort/comm_strong_scaling.png "comp")
+!["comp"](Graphs/column_sort/comm_weak_scaling.png "comp")
 
+The way we implemented column sort was communication heavy, as there was 1 column assigned per processor and 4 MPIall_to_all calls for each of those. Hence, the trend in strong scaling seen is an inverse quadratic curve: where while processing time initially decreased, it plateaued around 16 processes and then increased. Weak scaling behavior was as expected, where increasing the number of processes while increasing input size increased computation time.
+
+### Main
+!["comp"](Graphs/column_sort/main_strong_scaling.png "comp")
+!["comp"](Graphs/column_sort/main_weak_scaling.png "comp")
+!["comp"](Graphs/column_sort/main_speedup.png "comp")
+
+Similar to computation, we can see the effects of parallel programming in column sort, as the computation time is decreasing exponentially with the number of processes. Weak scaling behavior is as expected where ncreasing the number of processes while increasing input size increased computation time. Looking at speedup, computation displayed the expected behavior as the speedup was logarithmically and positively related to the number of processes till about 32 processes, after which it started declining.
 
 ### Algorithm Comparisons
 
