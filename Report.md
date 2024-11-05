@@ -1126,20 +1126,3 @@ In terms of computation, initially, all algorithms show improvement with increas
 <img src="Graphs/comparisons/l1_comparison.png" width="700">
 <img src="Graphs/comparisons/l2_comparison_random.png" width="700">
 In the L1 cache graph, sample sort exhibits the highest miss rate, indicating less efficient memory access patterns. Bitonic and radix sorts demonstrate notably better cache utilization, with their miss rates consistently lower across different process counts. The L2 cache miss graph is particularly revealing, with radix sort showing remarkably superior cache performance compared to other algorithms. This suggests that radix sort's memory access pattern is more cache-friendly, likely contributing to its overall better performance. The general trend shows improving cache performance with increased process counts for most algorithms, though sample sort maintains relatively high miss rates throughout. This cache behavior helps explain the overall performance characteristics observed in the other graphs.
-
-## 5. Presentation
-Plots for the presentation should be as follows:
-- For each implementation:
-    - For each of comp_large, comm, and main:
-        - Strong scaling plots for each input_size with lines for input_type (7 plots - 4 lines each)
-        - Strong scaling speedup plot for each input_type (4 plots)
-        - Weak scaling plots for each input_type (4 plots)
-
-Analyze these plots and choose a subset to present and explain in your presentation.
-
-## 6. Final Report
-Submit a zip named `TeamX.zip` where `X` is your team number. The zip should contain the following files:
-- Algorithms: Directory of source code of your algorithms.
-- Data: All `.cali` files used to generate the plots seperated by algorithm/implementation.
-- Jupyter notebook: The Jupyter notebook(s) used to generate the plots for the report.
-- Report.md
