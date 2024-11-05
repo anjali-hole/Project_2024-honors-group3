@@ -738,8 +738,6 @@ MPI_Finalize()
 ## 4. Performance evaluation
 
 ### Bitonic Sort
-
-#### Full Program
 <img src="Graphs/bitonic_sort/strong_scaling/main_16.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/main_18.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/main_20.png" width="700">
@@ -748,24 +746,6 @@ MPI_Finalize()
 <img src="Graphs/bitonic_sort/strong_scaling/main_26.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/main_28.png" width="700">
 
-<img src="Graphs/bitonic_sort/strong_speedup/main_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/strong_speedup/main_1_perc.png" width="700">
-<img src="Graphs/bitonic_sort/strong_speedup/main_random.png" width="700">
-<img src="Graphs/bitonic_sort/strong_speedup/main_reverse.png" width="700">
-
-<img src="Graphs/bitonic_sort/weak_scaling/main_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/weak_scaling/main_1_perc.png" width="700">
-<img src="Graphs/bitonic_sort/weak_scaling/main_random.png" width="700">
-<img src="Graphs/bitonic_sort/weak_scaling/main_reverse.png" width="700">
-
-<img src="Graphs/bitonic_sort/cache_miss/main_L1_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/main_L1_random.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/main_L1_reverse.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/main_L2_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/main_L2_random.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/main_L2_reverse.png" width="700">
-
-#### Computation
 <img src="Graphs/bitonic_sort/strong_scaling/comp_16.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comp_18.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comp_20.png" width="700">
@@ -774,24 +754,6 @@ MPI_Finalize()
 <img src="Graphs/bitonic_sort/strong_scaling/comp_26.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comp_28.png" width="700">
 
-<img src="Graphs/bitonic_sort/strong_speedup/comp_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/strong_speedup/comp_1_perc.png" width="700">
-<img src="Graphs/bitonic_sort/strong_speedup/comp_random.png" width="700">
-<img src="Graphs/bitonic_sort/strong_speedup/comp_reverse.png" width="700">
-
-<img src="Graphs/bitonic_sort/weak_scaling/comp_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/weak_scaling/comp_1_perc.png" width="700">
-<img src="Graphs/bitonic_sort/weak_scaling/comp_random.png" width="700">
-<img src="Graphs/bitonic_sort/weak_scaling/comp_reverse.png" width="700">
-
-<img src="Graphs/bitonic_sort/cache_miss/comp_L1_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/comp_L1_random.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/comp_L1_reverse.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/comp_L2_sorted.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/comp_L2_random.png" width="700">
-<img src="Graphs/bitonic_sort/cache_miss/comp_L2_reverse.png" width="700">
-
-#### Communication
 <img src="Graphs/bitonic_sort/strong_scaling/comm_16.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comm_18.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comm_20.png" width="700">
@@ -800,15 +762,55 @@ MPI_Finalize()
 <img src="Graphs/bitonic_sort/strong_scaling/comm_26.png" width="700">
 <img src="Graphs/bitonic_sort/strong_scaling/comm_28.png" width="700">
 
+For the small input sizes, adding more processes hurts the runtime because the overhead of communicating outweighs the benefits of added parallelism. This is especially true because the bitonic sort algorithm has more steps when there are more processors. But for the large input sizes, the runtime decreases as we would expect from a parallel algorithm.
+
+<img src="Graphs/bitonic_sort/strong_speedup/main_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/strong_speedup/main_1_perc.png" width="700">
+<img src="Graphs/bitonic_sort/strong_speedup/main_random.png" width="700">
+<img src="Graphs/bitonic_sort/strong_speedup/main_reverse.png" width="700">
+
+<img src="Graphs/bitonic_sort/strong_speedup/comp_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/strong_speedup/comp_1_perc.png" width="700">
+<img src="Graphs/bitonic_sort/strong_speedup/comp_random.png" width="700">
+<img src="Graphs/bitonic_sort/strong_speedup/comp_reverse.png" width="700">
+
 <img src="Graphs/bitonic_sort/strong_speedup/comm_sorted.png" width="700">
 <img src="Graphs/bitonic_sort/strong_speedup/comm_1_perc.png" width="700">
 <img src="Graphs/bitonic_sort/strong_speedup/comm_random.png" width="700">
 <img src="Graphs/bitonic_sort/strong_speedup/comm_reverse.png" width="700">
 
+Just like with the last set of graphs, smaller input sizes do worse when adding more processors but larger input sizes do better. The speedup doesn't seem to level off for the 2^28 size, meaning it could run on even more processors before reaching peak parallelism. The computations speedup plots are smooth and increasing while the communication plots are jagged and only seem to stay level or go down. This is because computations are predictable and consistent, whereas the communication depends on what grace is doing and varies a lot. And the computation part is where the algorithm benefits from parallelism, not communication, so it makes sense the computation is increasing where the communication is not.
+
+<img src="Graphs/bitonic_sort/weak_scaling/main_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scaling/main_1_perc.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scaling/main_random.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scaling/main_reverse.png" width="700">
+
+<img src="Graphs/bitonic_sort/weak_scaling/comp_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scaling/comp_1_perc.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scaling/comp_random.png" width="700">
+<img src="Graphs/bitonic_sort/weak_scaling/comp_reverse.png" width="700">
+
 <img src="Graphs/bitonic_sort/weak_scaling/comm_sorted.png" width="700">
 <img src="Graphs/bitonic_sort/weak_scaling/comm_1_perc.png" width="700">
 <img src="Graphs/bitonic_sort/weak_scaling/comm_random.png" width="700">
 <img src="Graphs/bitonic_sort/weak_scaling/comm_reverse.png" width="700">
+
+A perfectly parallel algorithm would show a level graph for the speedup, so it makes senses that these graphs are increasing. In fact, it wouldn't make sense for bitonic sort to have a level graph here because there are more communication steps needed for larger process counts.
+
+<img src="Graphs/bitonic_sort/cache_miss/main_L1_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L1_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L1_reverse.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L2_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L2_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/main_L2_reverse.png" width="700">
+
+<img src="Graphs/bitonic_sort/cache_miss/comp_L1_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L1_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L1_reverse.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L2_sorted.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L2_random.png" width="700">
+<img src="Graphs/bitonic_sort/cache_miss/comp_L2_reverse.png" width="700">
 
 <img src="Graphs/bitonic_sort/cache_miss/comm_L1_sorted.png" width="700">
 <img src="Graphs/bitonic_sort/cache_miss/comm_L1_random.png" width="700">
@@ -816,6 +818,8 @@ MPI_Finalize()
 <img src="Graphs/bitonic_sort/cache_miss/comm_L2_sorted.png" width="700">
 <img src="Graphs/bitonic_sort/cache_miss/comm_L2_random.png" width="700">
 <img src="Graphs/bitonic_sort/cache_miss/comm_L2_reverse.png" width="700">
+
+The total cache misses were higher for the larger number of processes, but the number of misses per rank were lower. This is because the problem size per processes is lower for the larger number of processes, but the larger number of processes means more steps so more computation and using memory. For some reason there were two outlier L2 cache misses just in main. This could be due to something weird connected to setting up MPI or something else outside our control.
 
 ### Sample Sort
 
