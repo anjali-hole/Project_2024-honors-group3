@@ -927,32 +927,27 @@ The L2 graphs are essentially the same as the comm graphs, since the computation
 
 ##### Weak Scaling
 <img src="Graphs/merge_sort/comm_ws_sorted.png" width="500"> <img src="Graphs/merge_sort/comm_ws_perturbed.png" width="500">
-
 <img src="Graphs/merge_sort/comm_ws_random.png" width="500"> <img src="Graphs/merge_sort/comm_ws_reverse.png" width="500">
+
 The weak scaling results demonstrate the implementation's ability to handle increased workload as processor count grows, with each processor maintaining a constant problem size. The graphs show relatively stable performance up to 64 processors, after which communication overhead becomes increasingly significant. All four input types (sorted, 1% perturbed, random, and reverse sorted) exhibit similar patterns, with communication time rising sharply beyond 64 processors. This behavior indicates that the communication overhead grows disproportionately to the number of processors, suggesting that the implementation's efficiency decreases at larger scales despite maintaining constant per-processor workload.
 
 ##### Strong Scaling
 <img src="Graphs/merge_sort/comm_ss_16.png" width="500"> <img src="Graphs/merge_sort/comm_ss_18.png" width="500">
-
 <img src="Graphs/merge_sort/comm_ss_20.png" width="500"> <img src="Graphs/merge_sort/comm_ss_22.png" width="500">
-
 <img src="Graphs/merge_sort/comm_ss_24.png" width="500"> <img src="Graphs/merge_sort/comm_ss_26.png" width="500">
-
 <img src="Graphs/merge_sort/comm_ss_28.png" width="500">
 
 For strong scaling, the most notable feature is the spikes around 64 processes, espcially for the random input type. This spike can be attributed to the switch from intranode communication to inter-node communication that happens when using 64 processes, resulting in incresed communication overhead and latency. All the graphs show increasing communication times with larger input sizes and and increased number of processes, likely as a result of the increased coordination required between the processes. Overall, the graphs suggest that the implementation's scaling efficiency is highly dependent on input distribution, with random data presenting particular challenges for load balancing and communication patterns.
 
 ##### Speedup
 <img src="Graphs/merge_sort/comm_speedup_sorted.png" width="500"> <img src="Graphs/merge_sort/comm_speedup_perturbed.png" width="500">
-
 <img src="Graphs/merge_sort/comm_speedup_random.png" width="500"> <img src="Graphs/merge_sort/comm_speedup_reverse.png" width="500">
+
 The speedup graphs reveal diminishing returns as processor count increases, with optimal performance typically achieved between 16-32 processors. All input types show declining speedup at higher processor counts, though reverse sorted data maintains better speedup compared to other input distributions. The graphs demonstrate parallel computing challenges, with Amdahl's Law limitations and communication overhead becoming increasingly significant at higher processor counts. The varying performance across different input types suggests that the implementation's efficiency is strongly influenced by data distribution, with more predictable distributions achieving better speedup characteristics than random or sorted data. The various dips in speedup can be attributed to inconsistent efficiency.
 
 ##### Cache Misses
 <img src="Graphs/merge_sort/l1_cm_comm_sorted.png" width="500"> <img src="Graphs/merge_sort/l2_cm_comm_sorted.png" width="500">
-
 <img src="Graphs/merge_sort/l1_cm_comm_reverse.png" width="500"> <img src="Graphs/merge_sort/l2_cm_comm_reverse.png" width="500">
-
 <img src="Graphs/merge_sort/l1_cm_comm_random.png" width="500"> <img src="Graphs/merge_sort/l2_cm_comm_random.png" width="500"> 
 
 The cache miss graphs show distinct patterns between L1 and L2 cache behavior. L1 cache misses demonstrate a consistent decrease in total misses as process count increases, while average misses per rank remain relatively stable, indicating effective data locality at the local processing level. L2 cache behavior shows more complex patterns, particularly for larger data sizes (2^29), where total misses increase while per-rank averages remain stable. The crossover patterns observed in the ReverseSorted data suggest memory hierarchy bottlenecks and potential cache thrashing at larger data sizes. This cache behavior indicates that memory access patterns significantly impact performance, particularly when scaling to larger problem sizes.
@@ -961,24 +956,22 @@ The cache miss graphs show distinct patterns between L1 and L2 cache behavior. L
 
 ##### Weak Scaling
 <img src="Graphs/merge_sort/comp_ws_sorted.png" width="500"> <img src="Graphs/merge_sort/comp_ws_perturbed.png" width="500">
-
 <img src="Graphs/merge_sort/comp_ws_random.png" width="500"> <img src="Graphs/merge_sort/comp_ws_reverse.png" width="500">
+
 The weak scaling results demonstrate the algorithm's ability to maintain relatively consistent computation performance as the problem size and number of processors increase proportionally. For sorted, 1% perturbed, and reverse sorted data, the execution times remain fairly stable until reaching higher processor counts (256-512), where slight increases suggest growing communication overhead. Random data exhibits higher execution times and more variance, indicating that unordered data patterns create additional computational complexity. The overall trend suggests good but not perfect weak scaling, with performance degradation primarily occurring at higher processor counts likely synchronization overhead.
 
 ##### Strong Scaling
 <img src="Graphs/merge_sort/comp_ss_16.png" width="500"> <img src="Graphs/merge_sort/comp_ss_18.png" width="500">
-
 <img src="Graphs/merge_sort/comp_ss_20.png" width="500"> <img src="Graphs/merge_sort/comp_ss_22.png" width="500">
-
 <img src="Graphs/merge_sort/comp_ss_24.png" width="500"> <img src="Graphs/merge_sort/comp_ss_26.png" width="500">
-
 <img src="Graphs/merge_sort/comp_ss_28.png" width="500">
+
 The strong scaling graphs reveal how execution time decreases with increased processor count for fixed total problem sizes (2^16 to 2^28). Random data consistently shows the poorest performance with significantly higher execution times compared to other data patterns, likely due to unpredictable memory access patterns and more complex merge operations. The curves demonstrate good scaling up to around 64 processors, after which diminishing returns become evident. This efficiency drop at higher processor counts is attributable to three main factors: increasing communication overhead, decreasing computation-to-communication ratio as work per processor shrinks, and potential load imbalances. Larger problem sizes (2^24 and above) exhibit better strong scaling characteristics due to maintaining a more favorable computation-to-communication ratio even at higher processor counts.
 
 ##### Speedup
 <img src="Graphs/merge_sort/comp_speedup_sorted.png" width="500"> <img src="Graphs/merge_sort/comp_speedup_perturbed.png" width="500">
-
 <img src="Graphs/merge_sort/comp_speedup_random.png" width="500"> <img src="Graphs/merge_sort/comp_speedup_reverse.png" width="500">
+
 The speedup graphs illustrate good speedup scaling up to 64-128 processors, with sorted and 1% perturbed data demonstrating the most consistent improvements. A notable dip in speedup occurs around 32-64 processors, particularly for random and reverse sorted data, likely due to a combination of increasing communication overhead and load imbalance effects. Larger problem sizes (2^24 to 2^28) achieve better speedup ratios, approaching ideal scaling more closely than smaller problems, demonstrating that the implementation benefits from larger datasets that better amortize parallelization overhead and maintain higher computation-to-communication ratios.
 
 ##### Cache Misses
@@ -992,29 +985,29 @@ The cache miss analysis for both L1 and L2 caches shows a gradual decrease in mi
 
 ##### Weak Scaling
 <img src="Graphs/merge_sort/main_ws_sorted.png" width="500"> <img src="Graphs/merge_sort/main_ws_perturbed.png" width="500">
-
 <img src="Graphs/merge_sort/main_ws_random.png" width="500"> <img src="Graphs/merge_sort/main_ws_reverse.png" width="500">
 
+The weak scaling results show that the parallel merge sort implementation struggles to maintain constant execution time as both problem size and processor count increase proportionally. This is evidenced by the upward trend in execution times, particularly pronounced after 128 processors. All input types (sorted, random, 1% perturbed, and reverse sorted) exhibit similar patterns, suggesting that the degradation is primarily due to increasing communication overhead and synchronization costs rather than data distribution characteristics. The steep increase in execution time at higher processor counts (256-512) indicates that the communication costs begin to dominate the computation benefits.
 
 ##### Strong Scaling
 <img src="Graphs/merge_sort/main_ss_16.png" width="500"> <img src="Graphs/merge_sort/main_ss_18.png" width="500">
-
 <img src="Graphs/merge_sort/main_ss_20.png" width="500"> <img src="Graphs/merge_sort/main_ss_22.png" width="500">
-
 <img src="Graphs/merge_sort/main_ss_24.png" width="500"> <img src="Graphs/merge_sort/main_ss_26.png" width="500">
-
 <img src="Graphs/merge_sort/main_ss_28.png" width="500">
+
+The strong scaling graphs reveal varying efficiency levels across different problem sizes (2^16 through 2^28). For smaller problem sizes (2^16, 2^18), the scaling is poor due to insufficient work per processor to offset communication overhead. Larger problem sizes (2^24 through 2^28) show better initial scaling but encounter efficiency drops at higher processor counts. Random data demonstrates consistently higher execution times but more predictable scaling behavior, while sorted and 1-percent-perturbed data show irregular performance patterns with notable spikes at certain processor counts (particularly at 64 and 256 processors). These spikes likely result from cache alignment issues and load imbalance when dealing with already-sorted sequences.
 
 ##### Speedup
 <img src="Graphs/merge_sort/main_speedup_sorted.png" width="500"> <img src="Graphs/merge_sort/main_speedup_perturbed.png" width="500">
-
 <img src="Graphs/merge_sort/main_speedup_random.png" width="500"> <img src="Graphs/merge_sort/main_speedup_reverse.png" width="500">
 
+The speedup graphs demonstrate sublinear scaling across all input types, with effectiveness varying by problem size and data distribution. Larger problem sizes (2^26, 2^28) achieve better speedup ratios due to their favorable computation-to-communication ratios. However, performance deteriorates sharply at high processor counts (256-512), indicating the dominance of communication overhead. Sorted data consistently shows lower speedup compared to random data, likely due to load imbalance issues. 
 
 ##### Cache Misses
 <img src="Graphs/merge_sort/l1_cm_main_sorted.png" width="500"> <img src="Graphs/merge_sort/l2_cm_main_sorted.png" width="500">
 <img src="Graphs/merge_sort/l1_cm_main_random.png" width="500"> <img src="Graphs/merge_sort/l2_cm_main_random.png" width="500">
 <img src="Graphs/merge_sort/l1_cm_main_reverse.png" width="500"> <img src="Graphs/merge_sort/l2_cm_main_reverse.png" width="500">
+The cache behavior graphs highlight interesting patterns in both L1 and L2 cache performance. L1 cache misses remain relatively stable across processor counts, with slight variations between input types. However, L2 cache misses show more dramatic patterns, particularly for sorted data where there's a notable crossover pattern. Random data consistently shows higher L2 cache miss rates due to its unpredictable memory access patterns, while sorted data experiences more variable cache behavior. These cache patterns directly correlate with performance dips observed in the scaling graphs, emphasizing the critical role of memory access patterns in overall algorithm performance.
 
 
 ### Radix Sort
