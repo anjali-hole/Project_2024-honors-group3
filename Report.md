@@ -1110,6 +1110,22 @@ Similar to computation, we can see the effects of parallel programming in column
 
 ### Algorithm Comparisons
 
+#### Main
+<img src="Graphs/comparisons/main_comparison_random.png" width="700">
+The main timing graph reveals interesting performance patterns across all sorting implementations. Starting at lower process counts, all algorithms show relatively high execution times around 3-4 seconds. Sample sort performs the worst, showing significant fluctuations in performance. As we move towards higher process counts, we see a general downward trend in execution time for all algorithms. Radix, merge, and bitonic sorts demonstrate very similar behavior after 16 processes, converging to nearly identical performance metrics. However, sample sort continues to show instability, with noticeable spikes in execution time even at higher process counts. Particularly interesting is the consistent performance of radix sort, which maintains the lowest and most stable execution times after 64 processes, suggesting better scalability than the other implemented algorithms.
+
+#### Communication
+<img src="Graphs/comparisons/comm_comparison_random.png" width="700">
+In the communication graph the most notable feature is the dramatic increase in communication time for sample sort at higher process counts, indicating poor communication scaling. Merge sort shows an interesting anomaly with a significant spike around 64 processes, suggesting a potential bottleneck in its communication pattern at this scale. In contrast, both radix and bitonic sorts maintain remarkably stable and low communication overhead throughout the process range. This graph particularly highlights how communication costs can become a dominant factor in parallel sorting performance as the number of processes increases, with radix sort showing the most efficient communication pattern overall.
+
+#### Computation
+<img src="Graphs/comparisons/comp_comparison_random.png" width="700">
+In terms of computation, initially, all algorithms show improvement with increased parallelization, starting from relatively high computation times. Sample sort again demonstrates the most irregular performance pattern, suggesting inconsistent load balancing. Radix sort consistently maintains better computation times throughout the process range, showing superior efficiency in handling larger datasets. Interestingly, all algorithms tend to converge in performance at very high process counts, indicating that the benefits of parallelization may plateau at these levels (diminishing returns from parallelization). The steady decline in computation time across all algorithms until this convergence point suggests that parallel implementation effectively reduces computational overhead up to a certain threshold.
+
+#### Cache Misses
+<img src="Graphs/comparisons/l1_comparison.png" width="700">
+<img src="Graphs/comparisons/l2_comparison_random.png" width="700">
+In the L1 cache graph, sample sort exhibits the highest miss rate, indicating less efficient memory access patterns. Bitonic and radix sorts demonstrate notably better cache utilization, with their miss rates consistently lower across different process counts. The L2 cache miss graph is particularly revealing, with radix sort showing remarkably superior cache performance compared to other algorithms. This suggests that radix sort's memory access pattern is more cache-friendly, likely contributing to its overall better performance. The general trend shows improving cache performance with increased process counts for most algorithms, though sample sort maintains relatively high miss rates throughout. This cache behavior helps explain the overall performance characteristics observed in the other graphs.
 
 ## 5. Presentation
 Plots for the presentation should be as follows:
