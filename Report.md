@@ -1128,5 +1128,5 @@ In terms of computation, initially, all algorithms show improvement with increas
 
 #### Cache Misses
 <img src="Graphs/comparisons/l1_comparison.png" width="700">
-<img src="Graphs/comparisons/l2_comparison_random.png" width="700">
+<img src="Graphs/comparisons/l2_comparison.png" width="700">
 In the L1 cache graph, sample sort exhibits the highest miss rate, indicating less efficient memory access patterns. Bitonic and radix sorts demonstrate notably better cache utilization, with their miss rates consistently lower across different process counts. The L2 cache miss graph is particularly revealing, with radix sort showing remarkably superior cache performance compared to other algorithms. This suggests that radix sort's memory access pattern is more cache-friendly, likely contributing to its overall better performance. The general trend shows improving cache performance with increased process counts for most algorithms, though sample sort maintains relatively high miss rates throughout. This cache behavior helps explain the overall performance characteristics observed in the other graphs.
